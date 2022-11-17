@@ -1,3 +1,5 @@
+// ignore_for_file: empty_catches
+
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
@@ -90,31 +92,47 @@ class DirInput extends StatelessWidget {
 }
 
 void openFile(File file) {
-  // TODO: implement for Linux und MacOS
-  if (Platform.isWindows) {
-    Process.run("explorer", [file.absolute.path]);
-  } else {
+  try {
+    if (Platform.isWindows) {
+      Process.run("explorer", [file.absolute.path]);
+    } else if (Platform.isLinux || Platform.isMacOS) {
+      Process.start("xdg-open", [file.absolute.path]);
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
     Get.snackbar(
         "Can't open file", "Not supported on ${Platform.operatingSystem}");
   }
 }
 
 void openDir(File file) {
-  // TODO: implement for Linux und MacOS
-  if (Platform.isWindows) {
-    Process.run("explorer", [p.dirname(file.absolute.path)]);
-  } else {
+  try {
+    if (Platform.isWindows) {
+      Process.run("explorer", [p.dirname(file.absolute.path)]);
+    } else if (Platform.isLinux || Platform.isMacOS) {
+      Process.start("xdg-open", [p.dirname(file.absolute.path)]);
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
     Get.snackbar(
         "Can't open directory", "Not supported on ${Platform.operatingSystem}");
   }
 }
 
 void consoleDir(File file) {
-  // TODO: implement for Linux und MacOS
-  if (Platform.isWindows) {
-    Process.run("start", ["cmd"],
-        runInShell: true, workingDirectory: p.dirname(file.absolute.path));
-  } else {
+  try {
+    if (Platform.isWindows) {
+      Process.run("start", ["cmd"],
+          runInShell: true, workingDirectory: p.dirname(file.absolute.path));
+    } else if (Platform.isLinux || Platform.isMacOS) {
+      Process.start("x-terminal-emulator", [],
+          workingDirectory: p.dirname(file.absolute.path));
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
     Get.snackbar(
         "Can't open console", "Not supported on ${Platform.operatingSystem}");
   }
@@ -122,20 +140,28 @@ void consoleDir(File file) {
 
 /// Runs/Starts a file
 void runFile(File file) {
-  // TODO: implement for Linux und MacOS
   final path = file.path;
   final ext = p.extension(path);
-  if (Platform.isWindows) {
-    if (ext == ".hs") {
-      Process.run("start", ["cmd", "/c", "ghci", p.basename(path)],
-          runInShell: true, workingDirectory: p.dirname(path));
-    } else if (ext == ".txt") {
-      Process.run("notepad", [file.absolute.path]);
+  try {
+    if (Platform.isWindows) {
+      if (ext == ".hs") {
+        Process.run("start", ["cmd", "/c", "ghci", p.basename(path)],
+            runInShell: true, workingDirectory: p.dirname(path));
+      } else if (ext == ".txt") {
+        Process.run("notepad", [file.absolute.path]);
+      }
+      return;
+    } else if (Platform.isLinux || Platform.isMacOS) {
+      if (ext == ".hs") {
+        Process.start("x-terminal-emulator", ["-e", "ghci $path"]);
+      } else {
+        openFile(file);
+      }
+      return;
     }
-  } else {
-    Get.snackbar(
-        "Can't run file", "Not supported on ${Platform.operatingSystem}");
-  }
+  } catch (e) {}
+  Get.snackbar(
+      "Can't run file", "Not supported on ${Platform.operatingSystem}");
 }
 
 /// Converts file2Text
@@ -177,10 +203,7 @@ List<List<dynamic>> loadCSV(String text) => [
     ];
 
 String storeCSV(List<List<dynamic>> table) => [
-      for (final line in table)
-        [
-          for (final field in line) '"$field"'
-        ].join(",")
+      for (final line in table) [for (final field in line) '"$field"'].join(",")
     ].join("\n");
 
 //TODO: direct modification in csv tables

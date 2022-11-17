@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -12,7 +11,6 @@ import 'package:app/home_page.dart';
 void main() async {
   // prefs is a global variable in logic.dart
   prefs = await SharedPreferences.getInstance();
-  log(prefs!.getString("projects")!);
   final projects = prefs!.getString("projects")?.split(";") ?? [];
   for (final project in projects) {
     if (project.isEmpty) continue;
