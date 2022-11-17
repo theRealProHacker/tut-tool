@@ -5,15 +5,19 @@ const String testCSV = "";
 
 void main() {
   test('csv', () {
-    return loadCSV('"eins", "zwei", "drei"\n"1","2","3"') == [
+    expect(loadCSV('"eins", "zwei", "drei"\n"1","2","3"'), [
       ["eins", "zwei", "drei"],
       [1, 2, 3]
-    ] && storeCSV([["eins", "zwei", "drei"],
-      [1, 2, 3]
-    ]) == '"eins","zwei","drei"\n"1","2","3"';
+    ]);
+    expect(
+        storeCSV([
+          ["eins", "zwei", "drei"],
+          [1, 2, 3]
+        ]),
+        '"eins","zwei","drei"\n"1","2","3"');
   });
 
   test('test test', () {
-    return false;
+    expect(false, false);
   });
 }

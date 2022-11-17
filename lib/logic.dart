@@ -191,7 +191,7 @@ class Student {
 
   List<dynamic> getRow(List<List<dynamic>> rows) {
     for (final row in rows) {
-      if (row.first == userName){
+      if (row.first == userName) {
         return row;
       }
     }
@@ -270,7 +270,7 @@ class Student {
 
   @override
   String toString() {
-    return displayName;    
+    return displayName;
   }
 }
 

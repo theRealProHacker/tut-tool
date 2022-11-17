@@ -220,15 +220,17 @@ class _SubmitProjectPageState extends State<SubmitProjectPage> {
                                       in zip(project.groups, snapshot.data!))
                                     for (final student in pair.first)
                                       student.setGrade(pair.second!)
-                                ])).where((e) => e != null);
-                                if (failed.isNotEmpty){
+                                ]))
+                                    .where((e) => e != null);
+                                if (failed.isNotEmpty) {
                                   Get.bottomSheet(Container(
-                                    decoration: const BoxDecoration(color: Colors.white),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('Failed for: ${failed.join(", ")}'),
-                                    )
-                                  ));
+                                      decoration: const BoxDecoration(
+                                          color: Colors.white),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                            'Failed for: ${failed.join(", ")}'),
+                                      )));
                                 }
                                 // Zip
                                 final file = await zipDir(project.dir);
