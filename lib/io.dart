@@ -94,9 +94,11 @@ class DirInput extends StatelessWidget {
 void openFile(File file) {
   try {
     if (Platform.isWindows) {
-      Process.run("explorer", [file.absolute.path]);
-    } else if (Platform.isLinux || Platform.isMacOS) {
-      Process.start("xdg-open", [file.absolute.path]);
+      Process.run("explorer", [file.path]);
+    } else if (Platform.isLinux) {
+      Process.run("xdg-open", [file.path]);
+    } else if (Platform.isMacOS) {
+      Process.run("open", [file.path]);
     } else {
       throw Exception();
     }
@@ -109,9 +111,11 @@ void openFile(File file) {
 void openDir(File file) {
   try {
     if (Platform.isWindows) {
-      Process.run("explorer", [p.dirname(file.absolute.path)]);
-    } else if (Platform.isLinux || Platform.isMacOS) {
-      Process.start("xdg-open", [p.dirname(file.absolute.path)]);
+      Process.run("explorer", [p.dirname(file.path)]);
+    } else if (Platform.isLinux) {
+      Process.run("xdg-open", [p.dirname(file.path)]);
+    } else if (Platform.isMacOS) {
+      Process.run("open", ["-R", file.path]);
     } else {
       throw Exception();
     }
@@ -125,10 +129,13 @@ void consoleDir(File file) {
   try {
     if (Platform.isWindows) {
       Process.run("start", ["cmd"],
-          runInShell: true, workingDirectory: p.dirname(file.absolute.path));
-    } else if (Platform.isLinux || Platform.isMacOS) {
-      Process.start("x-terminal-emulator", [],
-          workingDirectory: p.dirname(file.absolute.path));
+          runInShell: true, workingDirectory: p.dirname(file.path));
+    } else if (Platform.isLinux) {
+      Process.run("x-terminal-emulator", [],
+          workingDirectory: p.dirname(file.path));
+    } else if (Platform.isMacOS) {
+      Process.run("open", ["-n", "-a", "Terminal"],
+          workingDirectory: p.dirname(file.path));
     } else {
       throw Exception();
     }
@@ -143,25 +150,24 @@ void runFile(File file) {
   final path = file.path;
   final ext = p.extension(path);
   try {
-    if (Platform.isWindows) {
-      if (ext == ".hs") {
-        Process.run("start", ["cmd", "/c", "ghci", p.basename(path)],
+    if (ext == ".hs") {
+      if (Platform.isWindows) {
+        Process.run("start", ["ghci", p.basename(path)],
             runInShell: true, workingDirectory: p.dirname(path));
-      } else if (ext == ".txt") {
-        Process.run("notepad", [file.absolute.path]);
-      }
-      return;
-    } else if (Platform.isLinux || Platform.isMacOS) {
-      if (ext == ".hs") {
-        Process.start("x-terminal-emulator", ["-e", "ghci $path"]);
+      } else if (Platform.isLinux) {
+        Process.start("x-terminal-emulator", ["-e", "ghci", path]);
+      } else if (Platform.isMacOS) {
+        Process.run("open", ["-a", "ghci", path]);
       } else {
-        openFile(file);
+        throw Exception();
       }
-      return;
+    } else {
+      openFile(file);
     }
-  } catch (e) {}
-  Get.snackbar(
-      "Can't run file", "Not supported on ${Platform.operatingSystem}");
+  } catch (e) {
+    Get.snackbar(
+        "Can't run file", "Not supported on ${Platform.operatingSystem}");
+  }
 }
 
 /// Converts file2Text
