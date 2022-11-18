@@ -153,7 +153,7 @@ void runFile(File file) {
       return;
     } else if (Platform.isLinux || Platform.isMacOS) {
       if (ext == ".hs") {
-        Process.start("x-terminal-emulator", ["-e", "ghci $path"]);
+        Process.start("x-terminal-emulator", ["-e", "ghci \"$path\""]);
       } else {
         openFile(file);
       }
