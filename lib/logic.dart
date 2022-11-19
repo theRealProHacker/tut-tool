@@ -283,13 +283,16 @@ autoGroups(Project project) async {
   Project? bestProject;
   int bestMatch = (studentSet.length * 0.9).floor();
   for (final projectCandidate in projC.projects) {
+    // Skip this project
     if (project == projectCandidate) continue;
     final intersectingStudents =
         studentSet.intersection(Set.of(projectCandidate.students));
     if (intersectingStudents.length >= bestMatch) {
       bestProject = projectCandidate;
+      bestMatch = intersectingStudents.length;
     }
   }
+  // A self referencing student map for getting students from this project.
   final studentMap = {for (final k in studentSet) k: k};
   if (bestProject != null) {
     final groups = <Group>[];
@@ -304,7 +307,7 @@ autoGroups(Project project) async {
       }
       groups.add(newGroup);
     }
-    groups.addAll(studentSet.map((e) => [e]));
+    groups.addAll(studentMap.keys.map((e) => [e]));
     project.groups = groups;
     return;
   }
