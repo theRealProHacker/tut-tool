@@ -178,12 +178,11 @@ class Student {
   /// The students feedback files
   List<File> feedbackFiles = [];
 
-  /// The total submission text
-  String submissionText = "";
-
   /// The students directory
   String get dir =>
       p.join(project.dir.path, '$lastName, $firstName($userName)');
+
+  /// The students comments file
   File get commentsFile => File(p.join(dir, "comments.txt"));
 
   /// The name that the program should display the student as
@@ -222,6 +221,10 @@ class Student {
     ];
   }
 
+  Future<String> getSubmissionText() async =>
+      (await Future.wait([for (final file in submissionFiles) file2Text(file)]))
+          .join(" ");
+
   Future<List<File>> getFeedbackFiles() async {
     return [
       await for (final file
@@ -233,10 +236,7 @@ class Student {
   Future<void> update() async {
     // Update our state with IO-state
     submissionFiles = await getSubmissionFiles();
-    submissionText =
-        [for (final file in submissionFiles) await file2Text(file)].join(" ");
-    feedbackFiles = await getFeedbackFiles();
-    log("Updating stuff");
+    // feedbackFiles = await getFeedbackFiles();
   }
 
   Map<String, dynamic> toJson() => {
@@ -309,6 +309,7 @@ autoGroups(Project project) async {
     return;
   }
   // There is no similar project. Guess from the submissions.
+
   final students = project.students;
 
   /// Student that have submitted something
@@ -318,10 +319,10 @@ autoGroups(Project project) async {
   };
 
   /// Students with their submission texts
-  final studentsWithSubmissions = {
-    for (final student in studentsWithSubmissionFiles)
-      student: student.submissionText.toString()
-  };
+  final studentsWithSubmissions = Map.fromIterables(
+      studentsWithSubmissionFiles,
+      await Future.wait(
+          studentsWithSubmissionFiles.map((e) => e.getSubmissionText())));
 
   /// The pool of students that are assigned to the other students that submitted something.
   final Set<Student> studentPool =
@@ -343,8 +344,7 @@ autoGroups(Project project) async {
     final currentStudent = entry.key;
     final Map<Student, int> bestScores = {};
     final Map<Student, int> currentScores = {};
-    String text;
-    text = entry.value
+    String text = entry.value
         .replaceAll(RegExp(r"[^\w|\s]", unicode: true), "")
         .replaceAllMapped(RegExp(r"(?<!\s)[A-Z]", unicode: true),
             (match) => " ${match.group(0)!}");

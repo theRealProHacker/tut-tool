@@ -24,6 +24,7 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final project = widget.project;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -49,9 +50,9 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                           padding: MaterialStateProperty.all(
                               const EdgeInsets.all(12))),
                       onPressed: () async {
-                        setState(() => widget.project.groups
+                        setState(() => project.groups
                             .sort((a, b) => -a.length.compareTo(b.length)));
-                        await widget.project.save();
+                        await project.save();
                       },
                       icon: const Icon(Icons.sort),
                       label: const Text("Sort",
@@ -67,13 +68,28 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20)),
                       onPressed: (() async {
-                        final project = widget.project;
                         await autoGroups(project);
                         setState(() {
                           project.clean();
                         });
                         await project.save();
-                      }))
+                      })),
+                  const SizedBox(width: 10),
+                  ElevatedButton.icon(
+                      style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                              const EdgeInsets.all(12))),
+                      onPressed: () {
+                        setState(() {
+                          project.groups = [
+                            for (final student in project.students) [student]
+                          ];
+                        });
+                      },
+                      icon: const Icon(Icons.restore/*, color: Colors.indigo*/),
+                      label: const Text("Reset",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20)))
                 ],
               ),
               const SizedBox(width: 0, height: 30),
