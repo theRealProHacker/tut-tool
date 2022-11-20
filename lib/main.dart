@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:app/theme/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart'
@@ -19,11 +20,40 @@ void main() async {
     projC.projects.add(Project.add(attr.first, dir));
   }
   persistProjects(); // Removes invalid projects automatically
+
+  final darkMode = prefs!.getBool("darkMode") ?? false;
+  themeProvider.toggleTheme(darkMode);
+
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+ThemeProvider themeProvider = ThemeProvider();
+
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    themeProvider.addListener(themeListener);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    themeProvider.removeListener(themeListener);
+    super.dispose();
+  }
+
+  themeListener() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   // This widget is the root of your application.
   @override
@@ -32,9 +62,9 @@ class MyApp extends StatelessWidget {
     final c = Get.put(projC);
     return GetMaterialApp(
       title: 'Tutor Tool',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: MyThemes.lightTheme,
+      darkTheme: MyThemes.darkTheme,
+      themeMode: themeProvider.themeMode,
       defaultTransition: Transition.fadeIn,
       initialRoute: "/",
       routes: {"/": ((context) => const HomePage())},
