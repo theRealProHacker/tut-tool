@@ -228,13 +228,14 @@ class _SubmitProjectPageState extends State<SubmitProjectPage> {
                         onPressed: snapshot.hasData
                             ? () async {
                                 // Set grades
-                                final failed = (await Future.wait([
+                                // TODO: read, enter grade, then write
+                                // Not read, enter, write, read, enter, write, read, enter, write, ...
+                                final failed = [
                                   for (final pair
                                       in zip(project.groups, snapshot.data!))
                                     for (final student in pair.first)
-                                      student.setGrade(pair.second!)
-                                ]))
-                                    .where((e) => e != null);
+                                      await student.setGrade(pair.second!)
+                                ].where((e) => e != null);
                                 if (failed.isNotEmpty) {
                                   Get.bottomSheet(Container(
                                       decoration: const BoxDecoration(
