@@ -219,36 +219,17 @@ class _SubmitProjectPageState extends State<SubmitProjectPage> {
                 ]);
                 return [for (final comment in comments) getGrade(comment) ?? 0];
               }(),
-              initialData: List.filled(widget.project.groups.length, null),
+              initialData: List.filled(widget.project.groups.length, 0),
               builder: (context, snapshot) => Column(
                 children: [
                   Align(
                     alignment: Alignment.center,
                     child: ElevatedButton.icon(
                         onPressed: snapshot.hasData
-                            ? () async {
-                                // Set grades
-                                final failed = (await Future.wait([
-                                  for (final pair
-                                      in zip(project.groups, snapshot.data!))
-                                    for (final student in pair.first)
-                                      student.setGrade(pair.second!)
+                            ? () async => await project.submit(zip(project.groups, [
+                                  for (final grade in snapshot.data!)
+                                    grade
                                 ]))
-                                    .where((e) => e != null);
-                                if (failed.isNotEmpty) {
-                                  Get.bottomSheet(Container(
-                                      decoration: const BoxDecoration(
-                                          color: Colors.white),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                            'Failed for: ${failed.join(", ")}'),
-                                      )));
-                                }
-                                // Zip
-                                final file = await zipDir(project.dir);
-                                openDir(file);
-                              }
                             : null,
                         icon: const Icon(Icons.upload),
                         label: const Text(
@@ -278,9 +259,9 @@ class _SubmitProjectPageState extends State<SubmitProjectPage> {
                                         student.submissionFiles.isNotEmpty)
                                 ? Colors.green
                                 : Colors.red;
-                            final trailing = grade != null
+                            final trailing = snapshot.hasData
                                 ? Text(
-                                    niceDouble(grade),
+                                    niceNum(grade),
                                     style: TextStyle(color: trailingColor),
                                   )
                                 : const Text("Loading ...");
@@ -297,7 +278,7 @@ class _SubmitProjectPageState extends State<SubmitProjectPage> {
                               ),
                               trailing: trailing,
                             );
-                          }(),
+                          } (),
                           const Divider()
                         ]
                       ]),

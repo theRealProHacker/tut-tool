@@ -25,10 +25,10 @@ class _GroupPageState extends State<GroupPage> {
     final project = widget.project;
     final groupIndex = widget.groupIndex;
     if (controller.text.isNotEmpty) {
-      Future.wait([
+      await Future.wait([
         for (final student in project.groups[groupIndex])
           student.commentsFile.writeAsString(controller.text)
-      ]).then((value) => null);
+      ]);
     }
     if (finished) {
       project.finishedGroups.add(project.currGroup);
