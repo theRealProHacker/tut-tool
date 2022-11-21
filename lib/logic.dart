@@ -128,8 +128,10 @@ class Project {
         }
         await encoder.addFile(gradesFile);
         encoder.close();
-        // TODO: actually close the file
-        openDir(File(resultPath));
+        final resultFile = File(resultPath);
+        // Hacky way to actually close the zip-file
+        await (await resultFile.open()).close();
+        openDir(resultFile);
       } catch (e) {
         Get.snackbar("Failed to zip", "Not all ");
       }
