@@ -89,18 +89,35 @@ class Project {
   /// Get the index of a group. Sugar for project.groups.indexOf
   int groupIndex(Group group) => groups.indexOf(group);
 
-  /// Cleans the project
-  clean() {
+  /// Sorts the project
+  Future<void> sort() async {
+    // Put submitters first
+    for (final group in groups) {
+      group.sort((a,b)=> a.didSubmit? -1 : 1);
+    }
+    groups.sort((a, b) {
+      final aSubmit = a.any((s) => s.didSubmit);
+      if (aSubmit != b.any((s) => s.didSubmit)) {
+        return aSubmit ? -1 : 1;
+      } else {
+        return -a.length.compareTo(b.length);
+      }
+    });
+    await save();
+  }
+
+  /// Cleans the project by removing all empty groups
+  void clean() {
     groups.removeWhere((group) => group.isEmpty);
   }
 
-  /// Saves the project
-  save() async {
+  /// Saves the project to the projectFile
+  Future<void> save() async {
     await projFile.writeAsString(json.encode(toJson()));
   }
 
   /// Submits the project (grades and zipping)
-  submit(Iterable<Pair<List<Student>, num>> grades) async {
+  Future<void> submit(Iterable<Pair<List<Student>, num>> grades) async {
     // Enter grades
     final rows = loadCSV(await gradesFile.readAsString());
     final failedGrading = [
@@ -139,7 +156,7 @@ class Project {
   }
 
   /// Initializes the project
-  init() {
+  void init() {
     for (final student in students) {
       student.project = this;
     }
