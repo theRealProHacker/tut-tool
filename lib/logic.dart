@@ -7,6 +7,8 @@ import 'dart:io';
 import 'dart:math' hide log;
 
 import 'package:app/io.dart';
+import 'package:archive/archive_io.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart'
@@ -69,11 +71,13 @@ class Project {
 
   /// The project.json file with the data inside
   File get projFile => File(p.join(dir.path, "project.json"));
+  /// The grades.csv file
+  File get gradesFile => File(p.join(dir.path, "grades.csv"));
 
   /// All students in the project
   List<Student> get students => [for (final group in groups) ...group];
 
-  /// The title for the currentGroup
+  /// The title for the group
   String groupTitle(int index) =>
       [for (final student in groups[index]) student.displayName].join(", ");
 
@@ -85,19 +89,6 @@ class Project {
   /// Get the index of a group. Sugar for project.groups.indexOf
   int groupIndex(Group group) => groups.indexOf(group);
 
-  /// Encode a project as JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'lastGroup': currGroup,
-      'groups': [
-        for (final group in groups)
-          [for (final student in group) student.toJson()]
-      ],
-      'finishedGroups': List.of(finishedGroups),
-    };
-  }
-
   /// Cleans the project
   clean() {
     groups.removeWhere((group) => group.isEmpty);
@@ -106,6 +97,43 @@ class Project {
   /// Saves the project
   save() async {
     await projFile.writeAsString(json.encode(toJson()));
+  }
+
+  /// Submits the project (grades and zipping)
+  submit(Iterable<Pair<List<Student>, num>> grades) async {
+    // Enter grades
+    final rows = loadCSV(await gradesFile.readAsString());
+    final failedGrading = [
+      for (final pair in grades) 
+        for (final student in pair.first)
+          student.setGrade(rows, pair.second)
+    ].where((e) => e != null);
+    if (failedGrading.isNotEmpty) {
+      Get.bottomSheet(Container(
+          decoration: const BoxDecoration(
+              color: Colors.white),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+                'Failed for: ${failedGrading.join(", ")}'),
+          )));
+    } else {
+      // Only ZIP when entering grades worked
+      final resultPath = '${dir.path}.zip';
+      try {
+        final encoder = ZipFileEncoder();
+        encoder.open(resultPath);
+        for (final student in students) {
+          await encoder.addDirectory(Directory(student.dir));
+        }
+        await encoder.addFile(gradesFile);
+        encoder.close();
+        // TODO: actually close the file
+        openDir(File(resultPath));
+      } catch (e) {
+        Get.snackbar("Failed to zip", "Not all ");
+      }
+    }
   }
 
   /// Initializes the project
@@ -119,6 +147,19 @@ class Project {
 
     func().then(((value) => null));
     Timer.periodic(const Duration(seconds: 5), (timer) => func());
+  }
+
+  /// Encode a project as JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'lastGroup': currGroup,
+      'groups': [
+        for (final group in groups)
+          [for (final student in group) student.toJson()]
+      ],
+      'finishedGroups': List.of(finishedGroups),
+    };
   }
 
   /// Loads from file system
@@ -197,12 +238,9 @@ class Student {
     throw Exception("Could not find student in rows");
   }
 
-  Future<Student?> setGrade(double grade) async {
+  Student? setGrade(List<List<dynamic>> rows, num grade) {
     try {
-      final file = File(p.join(project.dir.path, "grades.csv"));
-      final rows = loadCSV(await file.readAsString());
       getRow(rows)[4] = grade;
-      await file.writeAsString(storeCSV(rows));
       return null;
     } catch (e) {
       log(e.toString());
@@ -396,12 +434,12 @@ Iterable<Pair<T1, T2>> zip<T1, T2>(
 // (number)/
 final gradeRegex = RegExp(r"(\d+(?:\.\d*)?)\/", unicode: true);
 
-double? getGrade(String text) {
+num? getGrade(String text) {
   text = text.trim();
   return double.tryParse(text.split("\n").last.split("/").first.trim());
 }
 
-String niceDouble(double d) {
+String niceNum(num d) {
   String s = d.toString();
   if (s.endsWith(".0")) {
     s = s.substring(0, s.length - 2);

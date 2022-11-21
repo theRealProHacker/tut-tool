@@ -4,8 +4,6 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:archive/archive_io.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart' as p;
@@ -187,15 +185,6 @@ Future<String> file2Text(File file) async {
     }
   }
   return "";
-}
-
-final zipEncoder = ZipFileEncoder();
-
-zipDir(Directory dir) async {
-  final resultPath = '${dir.path}.zip';
-  await compute(
-      (_) async => zipEncoder.zipDirectory(dir, filename: resultPath), 0);
-  return File(resultPath);
 }
 
 dynamic parseDynamic(String word) {
