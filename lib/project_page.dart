@@ -50,9 +50,8 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                           padding: MaterialStateProperty.all(
                               const EdgeInsets.all(12))),
                       onPressed: () async {
-                        setState(() => project.groups
-                            .sort((a, b) => -a.length.compareTo(b.length)));
-                        await project.save();
+                        await project.sort();
+                        setState(() {});
                       },
                       icon: const Icon(Icons.sort),
                       label: const Text("Sort",
