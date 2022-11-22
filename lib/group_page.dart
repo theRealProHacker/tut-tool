@@ -71,10 +71,9 @@ class _GroupPageState extends State<GroupPage> {
                   Tooltip(
                     message: "Open commandline",
                     child: ElevatedButton(
-                      style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.transparent),
-                          padding: MaterialStateProperty.all(EdgeInsets.zero)),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          padding: EdgeInsets.zero),
                       onPressed: () => consoleDir(file),
                       child: const Text(
                         "CMD",

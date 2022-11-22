@@ -118,7 +118,7 @@ class Project {
     groups.removeWhere((group) => group.isEmpty);
   }
 
-  /// Initializes the project. For this the students submission files are updated. 
+  /// Initializes the project. For this the students submission files are updated.
   Future<void> init() async {
     await Future.wait([for (final student in students) student.update()]);
   }
@@ -193,7 +193,10 @@ class Project {
         currGroup = data["lastGroup"];
         groups = [
           for (final group in data["groups"])
-            [for (final student in group) Student.fromJson(student, project: this)]
+            [
+              for (final student in group)
+                Student.fromJson(student, project: this)
+            ]
         ];
         finishedGroups = {
           for (final groupIndex in data["finishedGroups"]) groupIndex as int
@@ -317,15 +320,12 @@ class Student {
 
   factory Student.fromDirName(String dirName, {required project}) {
     final match = studentDirRegex.firstMatch(dirName)!;
-    return Student(
-      match.group(1)!,
-      match.group(2)!,
-      match.group(3)!,
-      project: project
-    );
+    return Student(match.group(1)!, match.group(2)!, match.group(3)!,
+        project: project);
   }
 
-  Student(this.lastName, this.firstName, this.userName, {required this.project});
+  Student(this.lastName, this.firstName, this.userName,
+      {required this.project});
 
   @override
   String toString() {

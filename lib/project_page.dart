@@ -1,6 +1,5 @@
 import 'package:app/group_page.dart';
 import 'package:app/home_page.dart';
-import 'package:app/io.dart';
 import 'package:app/logic.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -46,9 +45,8 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton.icon(
-                      style: ButtonStyle(
-                          padding: MaterialStateProperty.all(
-                              const EdgeInsets.all(12))),
+                      style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.all(12)),
                       onPressed: () async {
                         await project.sort();
                         setState(() {});
@@ -59,9 +57,8 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                               fontWeight: FontWeight.bold, fontSize: 20))),
                   const SizedBox(width: 10),
                   ElevatedButton.icon(
-                      style: ButtonStyle(
-                          padding: MaterialStateProperty.all(
-                              const EdgeInsets.all(12))),
+                      style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.all(12)),
                       icon: const Icon(Icons.auto_awesome, color: Colors.amber),
                       label: const Text("Auto",
                           style: TextStyle(
@@ -75,15 +72,13 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                       })),
                   const SizedBox(width: 10),
                   ElevatedButton.icon(
-                      style: ButtonStyle(
-                          padding: MaterialStateProperty.all(
-                              const EdgeInsets.all(12))),
+                      style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.all(12)),
                       onPressed: () async {
                         await project.reset();
                         setState(() {});
                       },
-                      icon:
-                          const Icon(Icons.restore /*, color: Colors.indigo*/),
+                      icon: const Icon(Icons.restore),
                       label: const Text("Reset",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20)))

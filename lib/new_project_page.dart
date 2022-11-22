@@ -41,11 +41,10 @@ class NewProjectPage extends StatelessWidget {
                         size: const Size(0, 30),
                       ),
                       ElevatedButton.icon(
-                        style: const ButtonStyle(
-                            padding: MaterialStatePropertyAll(
-                                EdgeInsets.fromLTRB(12, 15, 15, 15)),
-                            textStyle: MaterialStatePropertyAll(TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w400))),
+                        style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.fromLTRB(12, 15, 15, 15),
+                            textStyle: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w400)),
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
                             projC.addProject(Project.add(
