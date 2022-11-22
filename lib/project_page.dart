@@ -78,12 +78,9 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                       style: ButtonStyle(
                           padding: MaterialStateProperty.all(
                               const EdgeInsets.all(12))),
-                      onPressed: () {
-                        setState(() {
-                          project.groups = [
-                            for (final student in project.students) [student]
-                          ];
-                        });
+                      onPressed: () async {
+                        await project.reset();
+                        setState(() {});
                       },
                       icon:
                           const Icon(Icons.restore /*, color: Colors.indigo*/),

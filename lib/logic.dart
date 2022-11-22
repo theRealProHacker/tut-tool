@@ -90,12 +90,18 @@ class Project {
   /// Get the index of a group. Sugar for project.groups.indexOf
   int groupIndex(Group group) => groups.indexOf(group);
 
+  /// Saves the project to the projectFile
+  Future<void> save() async {
+    await projFile.writeAsString(json.encode(toJson()));
+  }
+
   /// Sorts the project
   Future<void> sort() async {
     // Put submitters first
     for (final group in groups) {
       group.sort((a, b) => a.didSubmit ? -1 : 1);
     }
+    // Sort the groups by submission then by length
     groups.sort((a, b) {
       final aSubmit = a.any((s) => s.didSubmit);
       if (aSubmit != b.any((s) => s.didSubmit)) {
@@ -112,9 +118,21 @@ class Project {
     groups.removeWhere((group) => group.isEmpty);
   }
 
-  /// Saves the project to the projectFile
-  Future<void> save() async {
-    await projFile.writeAsString(json.encode(toJson()));
+  /// Initializes the project. For this the students submission files are updated. 
+  Future<void> init() async {
+    await Future.wait([for (final student in students) student.update()]);
+  }
+
+  /// Resets students from the project directory
+  Future<void> reset() async {
+    finishedGroups = {};
+    groups = [
+      for (final subdir in dir.listSync())
+        if (subdir is Directory)
+          [Student.fromDirName(p.basename(subdir.path), project: this)]
+    ];
+    await sort();
+    await init();
   }
 
   /// Submits the project (grades and zipping)
@@ -148,22 +166,9 @@ class Project {
         await (await resultFile.open()).close();
         openDir(resultFile);
       } catch (e) {
-        Get.snackbar("Failed to zip", "Not all ");
+        Get.snackbar("Failed to zip", "ZipEncoder failed");
       }
     }
-  }
-
-  /// Initializes the project
-  void init() {
-    for (final student in students) {
-      student.project = this;
-    }
-    func() async {
-      await Future.wait([for (final student in students) student.update()]);
-    }
-
-    func().then(((value) => null));
-    Timer.periodic(const Duration(seconds: 5), (timer) => func());
   }
 
   /// Encode a project as JSON
@@ -180,29 +185,26 @@ class Project {
   }
 
   /// Loads from file system
-  void load() {
+  Future<void> load() async {
     dir = dir.absolute;
-    if (projFile.existsSync()) {
+    if (await projFile.exists()) {
       try {
         final data = jsonDecode(projFile.readAsStringSync());
         currGroup = data["lastGroup"];
         groups = [
           for (final group in data["groups"])
-            [for (final student in group) Student.fromJson(student)]
+            [for (final student in group) Student.fromJson(student, project: this)]
         ];
         finishedGroups = {
           for (final groupIndex in data["finishedGroups"]) groupIndex as int
         };
+        await init();
         return;
       } catch (e) {
         log("Couldn't load project ($e)");
       }
     }
-    // Initialize from directory
-    groups = [
-      for (final subdir in dir.listSync())
-        if (subdir is Directory) [Student.fromDirName(p.basename(subdir.path))]
-    ];
+    await reset();
   }
 
   /// Add the project from the file system
@@ -210,24 +212,23 @@ class Project {
     this.name,
     this.dir,
   ) {
-    load();
-    init();
+    load().then((_) {});
   }
 
-  Project(
-      {required this.name,
-      required this.groups,
-      required this.currGroup,
-      required this.dir}) {
-    init();
-  }
+  // Project(
+  //     {required this.name,
+  //     required this.groups,
+  //     required this.currGroup,
+  //     required this.dir}) {
+  //   init().then((_) {});
+  // }
 }
 
 class Student {
-  late String lastName;
-  late String firstName;
-  late String userName;
-  late Project project;
+  String lastName;
+  String firstName;
+  String userName;
+  Project project;
 
   // These get updated regularly
   /// The students submission files
@@ -309,19 +310,22 @@ class Student {
   @override
   int get hashCode => userName.hashCode;
 
-  Student.fromJson(Map<String, dynamic> json)
+  Student.fromJson(Map<String, dynamic> json, {required this.project})
       : lastName = json['lastName'],
         firstName = json['firstName'],
         userName = json['userName'];
 
-  Student.fromDirName(String dirName) {
+  factory Student.fromDirName(String dirName, {required project}) {
     final match = studentDirRegex.firstMatch(dirName)!;
-    lastName = match.group(1)!;
-    firstName = match.group(2)!;
-    userName = match.group(3)!;
+    return Student(
+      match.group(1)!,
+      match.group(2)!,
+      match.group(3)!,
+      project: project
+    );
   }
 
-  Student(this.lastName, this.firstName, this.userName);
+  Student(this.lastName, this.firstName, this.userName, {required this.project});
 
   @override
   String toString() {
@@ -428,11 +432,6 @@ autoGroups(Project project) async {
   project.groups = groups;
 }
 
-// Draft for guessing the maximum available points
-// Pair<int,int?> getGrades {
-
-// }
-
 class Pair<T1, T2> {
   final T1 first;
   final T2 second;
@@ -448,13 +447,8 @@ Iterable<Pair<T1, T2>> zip<T1, T2>(
   }
 }
 
-// (number)/
-final gradeRegex = RegExp(r"(\d+(?:\.\d*)?)\/", unicode: true);
-
-num? getGrade(String text) {
-  text = text.trim();
-  return double.tryParse(text.split("\n").last.split("/").first.trim());
-}
+num? getGrade(String text) =>
+    double.tryParse(text.trim().split("\n").last.split("/").first.trim());
 
 String niceNum(num d) {
   String s = d.toString();

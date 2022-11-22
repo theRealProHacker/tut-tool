@@ -23,7 +23,6 @@ void main() async {
       projC.projects.add(Project.add(attr.first, dir));
     });
   }
-  persistProjects(); // Removes invalid projects automatically
 
   final darkMode = prefs!.getBool("darkMode") ?? false;
   themeProvider.toggleTheme(darkMode);
