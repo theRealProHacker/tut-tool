@@ -16,8 +16,12 @@ void main() async {
   for (final project in projects) {
     if (project.isEmpty) continue;
     final attr = project.split(",");
-    final dir = Directory(attr.last).absolute;
-    projC.projects.add(Project.add(attr.first, dir));
+    final dir = Directory(attr.last);
+    dir.exists().then((dirExists) {
+      // XXX: Das ist besser als projc.addProject,
+      // da wir sicher sein können, dass Projects schon in preferences sind
+      projC.projects.add(Project.add(attr.first, dir));
+    });
   }
   persistProjects(); // Removes invalid projects automatically
 

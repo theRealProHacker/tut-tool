@@ -85,7 +85,8 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                           ];
                         });
                       },
-                      icon: const Icon(Icons.restore/*, color: Colors.indigo*/),
+                      icon:
+                          const Icon(Icons.restore /*, color: Colors.indigo*/),
                       label: const Text("Reset",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20)))
@@ -225,10 +226,9 @@ class _SubmitProjectPageState extends State<SubmitProjectPage> {
                     alignment: Alignment.center,
                     child: ElevatedButton.icon(
                         onPressed: snapshot.hasData
-                            ? () async => await project.submit(zip(project.groups, [
-                                  for (final grade in snapshot.data!)
-                                    grade
-                                ]))
+                            ? () async => await project.submit(zip(
+                                project.groups,
+                                [for (final grade in snapshot.data!) grade]))
                             : null,
                         icon: const Icon(Icons.upload),
                         label: const Text(
@@ -277,7 +277,7 @@ class _SubmitProjectPageState extends State<SubmitProjectPage> {
                               ),
                               trailing: trailing,
                             );
-                          } (),
+                          }(),
                           const Divider()
                         ]
                       ]),

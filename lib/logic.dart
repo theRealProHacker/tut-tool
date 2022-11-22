@@ -71,6 +71,7 @@ class Project {
 
   /// The project.json file with the data inside
   File get projFile => File(p.join(dir.path, "project.json"));
+
   /// The grades.csv file
   File get gradesFile => File(p.join(dir.path, "grades.csv"));
 
@@ -93,7 +94,7 @@ class Project {
   Future<void> sort() async {
     // Put submitters first
     for (final group in groups) {
-      group.sort((a,b)=> a.didSubmit? -1 : 1);
+      group.sort((a, b) => a.didSubmit ? -1 : 1);
     }
     groups.sort((a, b) {
       final aSubmit = a.any((s) => s.didSubmit);
@@ -121,18 +122,15 @@ class Project {
     // Enter grades
     final rows = loadCSV(await gradesFile.readAsString());
     final failedGrading = [
-      for (final pair in grades) 
-        for (final student in pair.first)
-          student.setGrade(rows, pair.second)
+      for (final pair in grades)
+        for (final student in pair.first) student.setGrade(rows, pair.second)
     ].where((e) => e != null);
     if (failedGrading.isNotEmpty) {
       Get.bottomSheet(Container(
-          decoration: const BoxDecoration(
-              color: Colors.white),
+          decoration: const BoxDecoration(color: Colors.white),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(
-                'Failed for: ${failedGrading.join(", ")}'),
+            child: Text('Failed for: ${failedGrading.join(", ")}'),
           )));
     } else {
       // Only ZIP when entering grades worked
