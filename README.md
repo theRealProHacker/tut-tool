@@ -31,13 +31,30 @@ Dadurch können zum Beispiel immer beide Gruppenmitglieder die Kommentare erhalt
 
 ## Changelog
 
-### v1.0.2 (geplant)
+### v1.0.4 (geplant)
+- Localization mit Deutsch und Englisch
+- Support für mehr Ausführoptionen (Python und vielleicht auch Make oder Ähnliches für ASM und C)
+- "Automatisches" Testen (Details folgen)
+
+### v1.0.3 (geplant)
+- Kommentartemplate für Projekte
+- Vorschau der Grade unter den Kommentaren
+- Änderung am bisherigen finished System. Man schließt eine Gruppe nun mit dem Eintragen des Grades ab und nicht durch das Klicken der grünen Buttons
+- File-Utils-Context-Menu
+- Besseres Auto Feature
+- Bessere Warnung vor unbenoteten Abgaben
+
+Anderes
+- Besseres I/O
+- Mehr Tooltips
+- Bessere Resetfunktion
+- Weniger Crashes
+
+### v1.0.2
 - Ein sicker Dark Mode
 - Korrekte File-Utils für Linux und Windows
 - Korrektes automatisches Zippen
-- Einfache Gradeeingabe, indem man am Ende der Kommentare "{grade}/{max_grade}" schreibt. 
 - Nice Sortierung der Gruppen
 
 ### v1.0.1
-
 - Kleiner Bug fix
