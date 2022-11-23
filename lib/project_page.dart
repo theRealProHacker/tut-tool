@@ -16,9 +16,8 @@ class ProjectGroupsPage extends StatefulWidget {
 class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
   goTo(int x) async {
     final project = widget.project;
-    project.currGroup = x;
+    await project.setCurrGroup(x);
     Get.to(() => GroupPage(project, x), transition: Transition.fade);
-    await project.save();
   }
 
   @override
@@ -32,6 +31,13 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Get.to(() => const HomePage()),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Get.to(()=>ProjectBlueprintPage(project));
+            }, 
+            icon: const Icon(Icons.map))
+        ],
       ),
       body: Stack(children: [
         Padding(
@@ -92,20 +98,17 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                       border: Border.all(color: Colors.black12, width: 3),
                       borderRadius: const BorderRadius.all(Radius.circular(5))),
                   child: ListView(children: [
-                    for (final group in widget.project.groups) ...[
+                    for (final entry in project.groups.asMap().entries) ...() {
+                      final index = entry.key;
+                      final group = entry.value;
+                      return [
                       DragTarget<Student>(
                         onAccept: (student) {
-                          final index = group.indexOf(student);
-                          if (index != -1) {
-                            group.insert(index, student);
-                          } else {
-                            group.add(student);
-                          }
+                          group.add(student);
                         },
                         builder: ((context, candidateData, rejectedData) =>
                             ListTile(
-                              onTap: () async => await goTo(
-                                  widget.project.groups.indexOf(group)),
+                              onTap: () async => await goTo(index),
                               title: Row(
                                 children: [
                                   for (final student in group)
@@ -114,25 +117,40 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                                         onDragCompleted: (() async {
                                           setState(() {
                                             group.remove(student);
-                                            widget.project.clean();
+                                            project.clean();
                                           });
-                                          await widget.project.save();
+                                          await project.save();
                                         }),
                                         feedback: TextBox(
                                             student: student,
-                                            project: widget.project),
+                                            project: project),
                                         childWhenDragging: TextBox(
                                             student: student,
-                                            project: widget.project),
+                                            project: project),
                                         child: TextBox(
                                             student: student,
-                                            project: widget.project)),
+                                            project: project)),
                                 ],
                               ),
+                              trailing: ElevatedButton.icon(
+                                onPressed: () {
+                                  final groups = project.groups;
+                                  groups.insertAll(index, [
+                                    for (final student in group)
+                                      [student]
+                                  ]);
+                                  setState(() {
+                                    groups.remove(group);
+                                  });
+                                }, 
+                                icon: const Icon(Icons.keyboard_arrow_down_outlined),
+                                label: const SizedBox()
+                              )
                             )),
                       ),
                       const Divider()
-                    ]
+                    ];
+                    }()
                   ]),
                 ),
               ),
@@ -180,9 +198,9 @@ class SubmitProjectPage extends StatefulWidget {
 
 class _SubmitProjectPageState extends State<SubmitProjectPage> {
   goTo(int x) async {
-    widget.project.currGroup = x;
-    Get.to(() => GroupPage(widget.project, x), transition: Transition.fade);
-    await widget.project.save();
+    final project = widget.project;
+    await project.setCurrGroup(x);
+    Get.to(() => GroupPage(project, x), transition: Transition.fade);
   }
 
   @override
@@ -275,5 +293,21 @@ class _SubmitProjectPageState extends State<SubmitProjectPage> {
                 );
               },
             )));
+  }
+}
+
+class ProjectBlueprintPage extends StatelessWidget {
+  final Project project;
+  const ProjectBlueprintPage(this.project, { Key? key }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text('Comments Blueprint'),
+      ),
+      body: Container(),
+    );
   }
 }
