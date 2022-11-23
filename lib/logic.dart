@@ -150,6 +150,7 @@ class Project {
       for (final pair in grades)
         for (final student in pair.first) student.setGrade(rows, pair.second)
     ].where((e) => e != null);
+    await gradesFile.writeAsString(storeCSV(rows), flush: true);
     if (failedGrading.isNotEmpty) {
       Get.bottomSheet(Container(
           decoration: const BoxDecoration(color: Colors.white),

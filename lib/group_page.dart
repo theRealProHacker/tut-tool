@@ -27,7 +27,7 @@ class _GroupPageState extends State<GroupPage> {
     if (controller.text.isNotEmpty) {
       await Future.wait([
         for (final student in project.groups[groupIndex])
-          student.commentsFile.writeAsString(controller.text)
+          student.commentsFile.writeAsString(controller.text, flush: true)
       ]);
     }
     project.currGroup += relativeIndex;
