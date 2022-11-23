@@ -83,11 +83,9 @@ class ProjectList extends StatelessWidget {
                   title: Text(projects[index].name),
                   trailing: SizedBox(
                     child: ElevatedButton(
-                        style: const ButtonStyle(
-                            backgroundColor:
-                                MaterialStatePropertyAll(Colors.white60),
-                            foregroundColor:
-                                MaterialStatePropertyAll(Colors.black87)),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white60,
+                            foregroundColor: Colors.black87),
                         onPressed: (() => projC.removeProjectAt(index)),
                         child: const Icon(Icons.delete)),
                   ),

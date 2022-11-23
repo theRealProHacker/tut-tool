@@ -153,7 +153,8 @@ void runFile(File file) {
         Process.run("start", ["ghci", p.basename(path)],
             runInShell: true, workingDirectory: p.dirname(path));
       } else if (Platform.isLinux) {
-        Process.start("x-terminal-emulator", ["-e", "ghci", p.basename(path)],workingDirectory: p.dirname(file.path));
+        Process.start("x-terminal-emulator", ["-e", "ghci", p.basename(path)],
+            workingDirectory: p.dirname(file.path));
       } else if (Platform.isMacOS) {
         Process.run("open", ["-a", "ghci", path]);
       } else {

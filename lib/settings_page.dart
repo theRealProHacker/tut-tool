@@ -12,9 +12,9 @@ class SettingsPage extends StatelessWidget {
         body: ListView(
           padding: const EdgeInsets.all(8.0),
           children: <Widget>[
-            Row(children: [
+            Row(children: const [
               ThemeChangeSwitch(),
-              const Text("Enable Dark Mode"),
+              Text("Enable Dark Mode"),
             ]),
           ],
         ));
