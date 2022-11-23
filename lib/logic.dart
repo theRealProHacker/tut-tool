@@ -67,7 +67,6 @@ class Project {
   Directory dir;
   List<Group> groups = [];
   int currGroup = -1;
-  Set<int> finishedGroups = {};
 
   /// The project.json file with the data inside
   File get projFile => File(p.join(dir.path, "project.json"));
@@ -86,6 +85,10 @@ class Project {
   File groupComments(int index) =>
       groups[index].firstWhereOrNull((element) => true)?.commentsFile ??
       devNull;
+
+  /// Get the grade of a group
+  Future<num?> groupGrade(int index) async =>
+      getGrade(await groupComments(index).readAsString());
 
   /// Get the index of a group. Sugar for project.groups.indexOf
   int groupIndex(Group group) => groups.indexOf(group);
@@ -125,7 +128,6 @@ class Project {
 
   /// Resets students from the project directory
   Future<void> reset() async {
-    finishedGroups = {};
     groups = [
       for (final subdir in dir.listSync())
         if (subdir is Directory)
@@ -180,7 +182,6 @@ class Project {
         for (final group in groups)
           [for (final student in group) student.toJson()]
       ],
-      'finishedGroups': List.of(finishedGroups),
     };
   }
 
@@ -198,9 +199,6 @@ class Project {
                 Student.fromJson(student, project: this)
             ]
         ];
-        finishedGroups = {
-          for (final groupIndex in data["finishedGroups"]) groupIndex as int
-        };
         await init();
         return;
       } catch (e) {
@@ -447,13 +445,19 @@ Iterable<Pair<T1, T2>> zip<T1, T2>(
   }
 }
 
-num? getGrade(String text) =>
+/// Get whether a group submitted or not
+bool didGroupSubmit(Group group) =>
+    group.any((student) => student.submissionFiles.isNotEmpty);
+
+double? getGrade(String text) =>
     double.tryParse(text.trim().split("\n").last.split("/").first.trim());
 
-String niceNum(num d) {
-  String s = d.toString();
-  if (s.endsWith(".0")) {
-    s = s.substring(0, s.length - 2);
+extension NiceNumber on num {
+  String nice() {
+    String s = toString();
+    if (s.endsWith(".0")) {
+      s = s.substring(0, s.length - 2);
+    }
+    return s;
   }
-  return s;
 }

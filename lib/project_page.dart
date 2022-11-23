@@ -94,47 +94,43 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                   child: ListView(children: [
                     for (final group in widget.project.groups) ...[
                       DragTarget<Student>(
-                          onAccept: (student) {
-                            final index = group.indexOf(student);
-                            if (index != -1) {
-                              group.insert(index, student);
-                            } else {
-                              group.add(student);
-                            }
-                          },
-                          builder: ((context, candidateData, rejectedData) =>
-                              ListTile(
-                                  onTap: () async => await goTo(
-                                      widget.project.groups.indexOf(group)),
-                                  title: Row(
-                                    children: [
-                                      for (final student in group)
-                                        Draggable<Student>(
-                                            data: student,
-                                            onDragCompleted: (() async {
-                                              setState(() {
-                                                group.remove(student);
-                                                widget.project.clean();
-                                              });
-                                              await widget.project.save();
-                                            }),
-                                            feedback: TextBox(
-                                                student: student,
-                                                project: widget.project),
-                                            childWhenDragging: TextBox(
-                                                student: student,
-                                                project: widget.project),
-                                            child: TextBox(
-                                                student: student,
-                                                project: widget.project)),
-                                    ],
-                                  ),
-                                  trailing: widget.project.finishedGroups
-                                          .contains(widget.project.groups
-                                              .indexOf(group))
-                                      ? const Icon(Icons.check,
-                                          color: Colors.green)
-                                      : const SizedBox()))),
+                        onAccept: (student) {
+                          final index = group.indexOf(student);
+                          if (index != -1) {
+                            group.insert(index, student);
+                          } else {
+                            group.add(student);
+                          }
+                        },
+                        builder: ((context, candidateData, rejectedData) =>
+                            ListTile(
+                              onTap: () async => await goTo(
+                                  widget.project.groups.indexOf(group)),
+                              title: Row(
+                                children: [
+                                  for (final student in group)
+                                    Draggable<Student>(
+                                        data: student,
+                                        onDragCompleted: (() async {
+                                          setState(() {
+                                            group.remove(student);
+                                            widget.project.clean();
+                                          });
+                                          await widget.project.save();
+                                        }),
+                                        feedback: TextBox(
+                                            student: student,
+                                            project: widget.project),
+                                        childWhenDragging: TextBox(
+                                            student: student,
+                                            project: widget.project),
+                                        child: TextBox(
+                                            student: student,
+                                            project: widget.project)),
+                                ],
+                              ),
+                            )),
+                      ),
                       const Divider()
                     ]
                   ]),
@@ -203,80 +199,81 @@ class _SubmitProjectPageState extends State<SubmitProjectPage> {
                 horizontal: MediaQuery.of(context).size.width * 0.1),
             child: FutureBuilder(
               future: () async {
-                final comments = await Future.wait([
-                  for (final group in project.groups)
-                    project
-                        .groupComments(project.groupIndex(group))
-                        .readAsString()
+                return await Future.wait([
+                  for (final index in Iterable.generate(project.groups.length))
+                    project.groupGrade(index)
                 ]);
-                return [for (final comment in comments) getGrade(comment) ?? 0];
               }(),
-              initialData: List.filled(widget.project.groups.length, 0),
-              builder: (context, snapshot) => Column(
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: ElevatedButton.icon(
-                        onPressed: snapshot.hasData
-                            ? () async => await project.submit(zip(
-                                project.groups,
-                                [for (final grade in snapshot.data!) grade]))
-                            : null,
-                        icon: const Icon(Icons.upload),
-                        label: const Text(
-                          "Submit",
-                          style: TextStyle(fontSize: 20),
-                        )),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Expanded(
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black12, width: 3),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(5))),
-                      child: ListView(children: [
-                        for (final pair
-                            in zip(widget.project.groups, snapshot.data!)) ...[
-                          () {
-                            final group = pair.first;
-                            final grade = pair.second;
-                            final trailingColor = widget.project.finishedGroups
-                                        .contains(widget.project.groups
-                                            .indexOf(group)) ||
-                                    !group.any((student) =>
-                                        student.submissionFiles.isNotEmpty)
-                                ? Colors.green
-                                : Colors.red;
-                            final trailing = snapshot.hasData
-                                ? Text(
-                                    niceNum(grade),
-                                    style: TextStyle(color: trailingColor),
-                                  )
-                                : const Text("Loading ...");
-                            return ListTile(
-                              onTap: () async => await goTo(
-                                  widget.project.groups.indexOf(group)),
-                              title: Row(
-                                children: [
-                                  for (final student in group)
-                                    TextBox(
-                                        student: student,
-                                        project: widget.project)
-                                ],
-                              ),
-                              trailing: trailing,
-                            );
-                          }(),
-                          const Divider()
-                        ]
-                      ]),
+              initialData: List.filled(widget.project.groups.length, null),
+              builder: (context, snapshot) {
+                // Default grade is zero
+                final realGrades = [
+                  for (final grade in snapshot.data!) grade ?? 0
+                ];
+                return Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: ElevatedButton.icon(
+                          onPressed: snapshot.hasData
+                              ? () async => await project
+                                  .submit(zip(project.groups, realGrades))
+                              : null,
+                          icon: const Icon(Icons.upload),
+                          label: const Text(
+                            "Submit",
+                            style: TextStyle(fontSize: 20),
+                          )),
                     ),
-                  ),
-                ],
-              ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Expanded(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black12, width: 3),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(5))),
+                        child: ListView(children: [
+                          for (final pair in zip(
+                              widget.project.groups, snapshot.data!)) ...[
+                            () {
+                              final group = pair.first;
+                              final grade = pair.second;
+                              final trailing = snapshot.hasData
+                                  ? Text(
+                                      'Grade: ${grade?.nice() ?? "None"}',
+                                      style: TextStyle(
+                                          // red if group submitted but has no grade
+                                          color: grade == null &&
+                                                  didGroupSubmit(group)
+                                              ? Colors.red
+                                              : Colors.green,
+                                          fontSize: 16),
+                                    )
+                                  : const Text("Loading ...");
+                              return ListTile(
+                                onTap: () async => await goTo(
+                                    widget.project.groups.indexOf(group)),
+                                title: Row(
+                                  children: [
+                                    for (final student in group)
+                                      TextBox(
+                                          student: student,
+                                          project: widget.project)
+                                  ],
+                                ),
+                                trailing: trailing,
+                              );
+                            }(),
+                            const Divider()
+                          ]
+                        ]),
+                      ),
+                    ),
+                  ],
+                );
+              },
             )));
   }
 }

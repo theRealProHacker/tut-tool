@@ -21,7 +21,7 @@ class GroupPage extends StatefulWidget {
 class _GroupPageState extends State<GroupPage> {
   TextEditingController controller = TextEditingController();
 
-  to(int relativeIndex, {required bool finished}) async {
+  to(int relativeIndex) async {
     final project = widget.project;
     final groupIndex = widget.groupIndex;
     if (controller.text.isNotEmpty) {
@@ -29,11 +29,6 @@ class _GroupPageState extends State<GroupPage> {
         for (final student in project.groups[groupIndex])
           student.commentsFile.writeAsString(controller.text)
       ]);
-    }
-    if (finished) {
-      project.finishedGroups.add(project.currGroup);
-    } else {
-      project.finishedGroups.remove(project.currGroup);
     }
     project.currGroup += relativeIndex;
     if (project.currGroup <= -1) {
@@ -134,14 +129,12 @@ class _GroupPageState extends State<GroupPage> {
         title: Text(project.groupTitle(groupIndex)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () async => await to(-project.currGroup - 1,
-              finished: project.finishedGroups.contains(project.currGroup)),
+          onPressed: () async => await to(-project.currGroup - 1),
         ),
         actions: [
           IconButton(
-              onPressed: () async => await to(
-                  project.groups.length - project.currGroup,
-                  finished: true),
+              onPressed: () async =>
+                  await to(project.groups.length - project.currGroup),
               icon: const Icon(Icons.arrow_forward))
         ],
       ),
@@ -164,22 +157,13 @@ class _GroupPageState extends State<GroupPage> {
               direction: Axis.vertical,
               children: [
                 Expanded(
-                  child: Container(
-                    decoration: const BoxDecoration(color: Colors.lightGreen),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).appBarTheme.backgroundColor),
                     child: IconButton(
                       splashRadius: null,
                       icon: const Icon(Icons.arrow_left_outlined),
-                      onPressed: () async => await to(-1, finished: true),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: const BoxDecoration(color: Colors.black26),
-                    child: IconButton(
-                      splashRadius: null,
-                      icon: const Icon(Icons.arrow_left_outlined),
-                      onPressed: () async => to(-1, finished: false),
+                      onPressed: () async => await to(-1),
                     ),
                   ),
                 ),
@@ -192,22 +176,13 @@ class _GroupPageState extends State<GroupPage> {
               direction: Axis.vertical,
               children: [
                 Expanded(
-                  child: Container(
-                    decoration: const BoxDecoration(color: Colors.lightGreen),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).appBarTheme.backgroundColor),
                     child: IconButton(
                       splashRadius: null,
                       icon: const Icon(Icons.arrow_right_outlined),
-                      onPressed: () async => await to(1, finished: true),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: const BoxDecoration(color: Colors.black26),
-                    child: IconButton(
-                      splashRadius: null,
-                      icon: const Icon(Icons.arrow_right_outlined),
-                      onPressed: () async => await to(1, finished: false),
+                      onPressed: () async => await to(1),
                     ),
                   ),
                 ),
