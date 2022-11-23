@@ -33,10 +33,12 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
         ),
         actions: [
           IconButton(
+            tooltip: "Blueprint",
               onPressed: () {
                 Get.to(() => ProjectBlueprintPage(project));
               },
-              icon: const Icon(Icons.map))
+              icon: const Icon(Icons.map)),
+          const SizedBox(width: 20)
         ],
       ),
       body: Stack(children: [
@@ -133,20 +135,23 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                                                   project: project)),
                                       ],
                                     ),
-                                    trailing: ElevatedButton.icon(
-                                        onPressed: () {
-                                          final groups = project.groups;
-                                          groups.insertAll(index, [
-                                            for (final student in group)
-                                              [student]
-                                          ]);
-                                          setState(() {
-                                            groups.remove(group);
-                                          });
-                                        },
-                                        icon: const Icon(
-                                            Icons.keyboard_arrow_down_outlined),
-                                        label: const SizedBox()))),
+                                    trailing: Tooltip(
+                                      message: "Expand",
+                                      child: ElevatedButton.icon(
+                                          onPressed: () {
+                                            final groups = project.groups;
+                                            groups.insertAll(index, [
+                                              for (final student in group)
+                                                [student]
+                                            ]);
+                                            setState(() {
+                                              groups.remove(group);
+                                            });
+                                          },
+                                          icon: const Icon(
+                                              Icons.keyboard_arrow_down_outlined),
+                                          label: const SizedBox()),
+                                    ))),
                           ),
                           const Divider()
                         ];

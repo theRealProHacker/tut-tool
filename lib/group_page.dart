@@ -68,10 +68,14 @@ class _GroupPageState extends State<GroupPage> {
                     opendirUtil,
                     openfileUtil,
                     runfileUtil
-                  ]) UtilContextMenuTile(util: util, file: file)
+                  ])
+                    UtilContextMenuTile(util: util, file: file)
                 ];
               },
               child: GFAccordion(
+                collapsedTitleBackgroundColor: Theme.of(context).dialogBackgroundColor,
+                expandedTitleBackgroundColor: Theme.of(context).highlightColor,
+                contentBackgroundColor: Theme.of(context).cardColor,
                 titleChild: Row(
                   children: [
                     Text(p.basename(file.path)),
@@ -82,7 +86,8 @@ class _GroupPageState extends State<GroupPage> {
                         opendirUtil,
                         openfileUtil,
                         runfileUtil
-                      ]) UtilButton(util: util, file: file)
+                      ])
+                        UtilButton(util: util, file: file)
                     ]
                   ],
                 ),

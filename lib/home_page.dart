@@ -81,7 +81,8 @@ class ProjectList extends StatelessWidget {
               ? ListTile(
                   leading: const Icon(Icons.edit),
                   title: Text(projects[index].name),
-                  trailing: SizedBox(
+                  trailing: Tooltip(
+                    message: "Delete",
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white60,

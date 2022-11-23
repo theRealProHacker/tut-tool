@@ -46,7 +46,7 @@ class FileShower extends StatelessWidget {
               ? HighlightView(
                   snapshot.data!,
                   language: langMap[ext],
-                  theme: themeMap["github"]!,
+                  theme: context.isDarkMode ? themeMap["tomorrow-night"]! : themeMap["github"]!,
                   padding: const EdgeInsets.all(12),
                   textStyle: const TextStyle(
                       fontFamily:
