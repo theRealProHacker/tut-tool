@@ -1,5 +1,7 @@
+import 'package:app/file_utils.dart';
 import 'package:app/io.dart';
 import 'package:app/project_page.dart';
+import 'package:contextmenu/contextmenu.dart';
 import 'package:flutter/material.dart';
 
 import 'package:path/path.dart' as p;
@@ -58,45 +60,34 @@ class _GroupPageState extends State<GroupPage> {
             for (final student in widget.project.groups[groupIndex])
               ...student.submissionFiles
           ])
-            GFAccordion(
-              titleChild: Row(
-                children: [
-                  Text(p.basename(file.path)),
-                  const Expanded(child: SizedBox()),
-                  Tooltip(
-                    message: "Open commandline",
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          padding: EdgeInsets.zero),
-                      onPressed: () => consoleDir(file),
-                      child: const Text(
-                        "CMD",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "MonoLisa, monospace"),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () => openDir(file),
-                    icon: const Icon(Icons.folder),
-                    tooltip: "Open directory",
-                  ),
-                  IconButton(
-                    onPressed: () => openFile(file),
-                    icon: const Icon(Icons.file_open),
-                    tooltip: "Open file",
-                  ),
-                  IconButton(
-                    onPressed: () => runFile(file),
-                    icon: const Icon(Icons.play_arrow),
-                    tooltip: "Run file",
-                  )
-                ],
+            ContextMenuArea(
+              builder: (context) {
+                return [
+                  for (final util in [
+                    terminalUtil,
+                    opendirUtil,
+                    openfileUtil,
+                    runfileUtil
+                  ]) UtilContextMenuTile(util: util, file: file)
+                ];
+              },
+              child: GFAccordion(
+                titleChild: Row(
+                  children: [
+                    Text(p.basename(file.path)),
+                    const Expanded(child: SizedBox()),
+                    ...[
+                      for (final util in [
+                        terminalUtil,
+                        opendirUtil,
+                        openfileUtil,
+                        runfileUtil
+                      ]) UtilButton(util: util, file: file)
+                    ]
+                  ],
+                ),
+                contentChild: FileShower(file),
               ),
-              contentChild: FileShower(file),
             )
         ]));
     final feedbackSide = DecoratedBox(
