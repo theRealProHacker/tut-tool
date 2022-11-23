@@ -12,16 +12,27 @@ dependencies:
   flutter:
     sdk: flutter
   
+  # basically useless
   cupertino_icons: ^1.0.2
   get: ^4.6.5
+  # für globalen state
   shared_preferences: ^2.0.15
+  # path utils (basename, dirname, join, usw.)
   path: ^1.8.2
+  # um den Projektordner zu wählen
   file_picker: ^5.2.2
+  # um den text aus PDFs zu extrahieren
   syncfusion_flutter_pdf: ^20.3.52
+  # für das Accordion
   getwidget: ^3.0.1
+  # Zum Anzeigen von PDFs (ungenutzt)
   pdfx: ^2.3.0
+  # Syntax Highlighting
   flutter_highlighter: ^0.1.1
+  # Zip utils
   archive: ^3.3.3
+  # context menu support
+  contextmenu: ^3.0.0
 
 dev_dependencies:
   flutter_test:
