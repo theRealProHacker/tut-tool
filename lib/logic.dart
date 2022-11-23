@@ -98,6 +98,11 @@ class Project {
     await projFile.writeAsString(json.encode(toJson()));
   }
 
+  Future<void> setCurrGroup(int index) async {
+    currGroup = index;
+    await save();
+  }
+
   /// Sorts the project
   Future<void> sort() async {
     // Put submitters first

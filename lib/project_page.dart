@@ -16,9 +16,8 @@ class ProjectGroupsPage extends StatefulWidget {
 class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
   goTo(int x) async {
     final project = widget.project;
-    project.currGroup = x;
+    await project.setCurrGroup(x);
     Get.to(() => GroupPage(project, x), transition: Transition.fade);
-    await project.save();
   }
 
   @override
@@ -32,6 +31,13 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Get.to(() => const HomePage()),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Get.to(()=>ProjectBlueprintPage(project));
+            }, 
+            icon: const Icon(Icons.map))
+        ],
       ),
       body: Stack(children: [
         Padding(
@@ -180,9 +186,9 @@ class SubmitProjectPage extends StatefulWidget {
 
 class _SubmitProjectPageState extends State<SubmitProjectPage> {
   goTo(int x) async {
-    widget.project.currGroup = x;
-    Get.to(() => GroupPage(widget.project, x), transition: Transition.fade);
-    await widget.project.save();
+    final project = widget.project;
+    await project.setCurrGroup(x);
+    Get.to(() => GroupPage(project, x), transition: Transition.fade);
   }
 
   @override
@@ -275,5 +281,21 @@ class _SubmitProjectPageState extends State<SubmitProjectPage> {
                 );
               },
             )));
+  }
+}
+
+class ProjectBlueprintPage extends StatelessWidget {
+  final Project project;
+  const ProjectBlueprintPage(this.project, { Key? key }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text('Comments Blueprint'),
+      ),
+      body: Container(),
+    );
   }
 }
