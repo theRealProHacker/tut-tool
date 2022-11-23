@@ -13,20 +13,18 @@ void main() async {
   // prefs is a global variable in logic.dart
   prefs = await SharedPreferences.getInstance();
   final projectsString = prefs!.getString("projects")?.trim();
-  if (projectsString?.isNotEmpty ?? false){
+  if (projectsString?.isNotEmpty ?? false) {
     final projects = projectsString!.split(";");
-    await Future.wait(
-      [
-        for (final project in projects) 
-          () async {
-            final attr = project.split(",");
-            final dir = Directory(attr.last);
-            if (await dir.exists()) {
-              projC.projects.add(Project.add(attr.first, dir));
-            }
-          } ()
-      ]
-    );
+    await Future.wait([
+      for (final project in projects)
+        () async {
+          final attr = project.split(",");
+          final dir = Directory(attr.last);
+          if (await dir.exists()) {
+            projC.projects.add(Project.add(attr.first, dir));
+          }
+        }()
+    ]);
   }
 
   final darkMode = prefs!.getBool("darkMode") ?? false;

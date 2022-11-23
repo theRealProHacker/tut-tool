@@ -33,10 +33,10 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
         ),
         actions: [
           IconButton(
-            onPressed: () {
-              Get.to(()=>ProjectBlueprintPage(project));
-            }, 
-            icon: const Icon(Icons.map))
+              onPressed: () {
+                Get.to(() => ProjectBlueprintPage(project));
+              },
+              icon: const Icon(Icons.map))
         ],
       ),
       body: Stack(children: [
@@ -98,59 +98,59 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                       border: Border.all(color: Colors.black12, width: 3),
                       borderRadius: const BorderRadius.all(Radius.circular(5))),
                   child: ListView(children: [
-                    for (final entry in project.groups.asMap().entries) ...() {
-                      final index = entry.key;
-                      final group = entry.value;
-                      return [
-                      DragTarget<Student>(
-                        onAccept: (student) {
-                          group.add(student);
-                        },
-                        builder: ((context, candidateData, rejectedData) =>
-                            ListTile(
-                              onTap: () async => await goTo(index),
-                              title: Row(
-                                children: [
-                                  for (final student in group)
-                                    Draggable<Student>(
-                                        data: student,
-                                        onDragCompleted: (() async {
+                    for (final entry in project.groups.asMap().entries)
+                      ...() {
+                        final index = entry.key;
+                        final group = entry.value;
+                        return [
+                          DragTarget<Student>(
+                            onAccept: (student) {
+                              group.add(student);
+                            },
+                            builder: ((context, candidateData, rejectedData) =>
+                                ListTile(
+                                    onTap: () async => await goTo(index),
+                                    title: Row(
+                                      children: [
+                                        for (final student in group)
+                                          Draggable<Student>(
+                                              data: student,
+                                              onDragCompleted: (() async {
+                                                setState(() {
+                                                  group.remove(student);
+                                                  project.clean();
+                                                });
+                                                await project.save();
+                                              }),
+                                              feedback: TextBox(
+                                                  student: student,
+                                                  project: project),
+                                              childWhenDragging: TextBox(
+                                                  student: student,
+                                                  project: project),
+                                              child: TextBox(
+                                                  student: student,
+                                                  project: project)),
+                                      ],
+                                    ),
+                                    trailing: ElevatedButton.icon(
+                                        onPressed: () {
+                                          final groups = project.groups;
+                                          groups.insertAll(index, [
+                                            for (final student in group)
+                                              [student]
+                                          ]);
                                           setState(() {
-                                            group.remove(student);
-                                            project.clean();
+                                            groups.remove(group);
                                           });
-                                          await project.save();
-                                        }),
-                                        feedback: TextBox(
-                                            student: student,
-                                            project: project),
-                                        childWhenDragging: TextBox(
-                                            student: student,
-                                            project: project),
-                                        child: TextBox(
-                                            student: student,
-                                            project: project)),
-                                ],
-                              ),
-                              trailing: ElevatedButton.icon(
-                                onPressed: () {
-                                  final groups = project.groups;
-                                  groups.insertAll(index, [
-                                    for (final student in group)
-                                      [student]
-                                  ]);
-                                  setState(() {
-                                    groups.remove(group);
-                                  });
-                                }, 
-                                icon: const Icon(Icons.keyboard_arrow_down_outlined),
-                                label: const SizedBox()
-                              )
-                            )),
-                      ),
-                      const Divider()
-                    ];
-                    }()
+                                        },
+                                        icon: const Icon(
+                                            Icons.keyboard_arrow_down_outlined),
+                                        label: const SizedBox()))),
+                          ),
+                          const Divider()
+                        ];
+                      }()
                   ]),
                 ),
               ),
@@ -298,7 +298,7 @@ class _SubmitProjectPageState extends State<SubmitProjectPage> {
 
 class ProjectBlueprintPage extends StatelessWidget {
   final Project project;
-  const ProjectBlueprintPage(this.project, { Key? key }) : super(key: key);
+  const ProjectBlueprintPage(this.project, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
