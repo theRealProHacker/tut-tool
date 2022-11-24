@@ -11,27 +11,18 @@ import 'package:getwidget/getwidget.dart';
 import 'package:app/logic.dart';
 
 /// Single Group Page for grading
-class GroupPage extends StatefulWidget {
+class GroupPage extends StatelessWidget {
   final Project project;
   final int groupIndex;
-  const GroupPage(this.project, this.groupIndex, {Key? key}) : super(key: key);
-
-  @override
-  State<GroupPage> createState() => _GroupPageState();
-}
-
-class _GroupPageState extends State<GroupPage> {
-  TextEditingController controller = TextEditingController();
+  final TextEditingController controller = TextEditingController();
+  GroupPage(this.project, this.groupIndex, {Key? key}) : super(key: key) {
+    project.groupCommentFile(groupIndex).readAsString().then(((value) {
+      controller.text = value;
+    }));
+  }
 
   to(int relativeIndex) async {
-    final project = widget.project;
-    final groupIndex = widget.groupIndex;
-    if (controller.text.isNotEmpty) {
-      await Future.wait([
-        for (final student in project.groups[groupIndex])
-          student.commentsFile.writeAsString(controller.text, flush: true)
-      ]);
-    }
+    await project.setGroupComment(groupIndex, controller.text);
     project.currGroup += relativeIndex;
     if (project.currGroup <= -1) {
       Get.to(() => ProjectGroupsPage(project));
@@ -46,43 +37,34 @@ class _GroupPageState extends State<GroupPage> {
 
   @override
   Widget build(BuildContext context) {
-    final project = widget.project;
-    final groupIndex = widget.groupIndex;
-    widget.project.groupComments(groupIndex).readAsString().then(((value) {
-      controller.text = value;
-    }));
     final submissionSide = DecoratedBox(
         decoration: BoxDecoration(
             border: Border.all(color: Colors.black12, width: 3),
             borderRadius: const BorderRadius.all(Radius.circular(5))),
         child: ListView(children: [
           for (final file in [
-            for (final student in widget.project.groups[groupIndex])
+            for (final student in project.groups[groupIndex])
               ...student.submissionFiles
           ])
             ContextMenuArea(
               builder: (context) {
                 return [
-                  for (final util in [
-                    terminalUtil,
-                    opendirUtil,
-                    openfileUtil,
-                    runfileUtil
-                  ]) UtilContextMenuTile(util: util, file: file)
+                  for (final util in fileUtils)
+                    UtilContextMenuTile(util: util, file: file)
                 ];
               },
               child: GFAccordion(
+                collapsedTitleBackgroundColor:
+                    Theme.of(context).dialogBackgroundColor,
+                expandedTitleBackgroundColor: Theme.of(context).highlightColor,
+                contentBackgroundColor: Theme.of(context).cardColor,
                 titleChild: Row(
                   children: [
                     Text(p.basename(file.path)),
                     const Expanded(child: SizedBox()),
                     ...[
-                      for (final util in [
-                        terminalUtil,
-                        opendirUtil,
-                        openfileUtil,
-                        runfileUtil
-                      ]) UtilButton(util: util, file: file)
+                      for (final util in fileUtils)
+                        UtilButton(util: util, file: file)
                     ]
                   ],
                 ),
@@ -98,19 +80,7 @@ class _GroupPageState extends State<GroupPage> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              decoration: const InputDecoration(
-                  labelText: "Comments",
-                  alignLabelWithHint: true,
-                  border: OutlineInputBorder()),
-              controller: controller,
-              maxLines: 20,
-              minLines: 5,
-              cursorRadius: const Radius.circular(5),
-              // readOnly: loading,
-            )
-          ],
+          children: [CommentsTextField(controller: controller)],
         ),
       ),
     );

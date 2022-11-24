@@ -63,10 +63,11 @@ final studentDirRegex = RegExp(r"([^,]+), (.*)\((.*)\)");
 final File devNull = Platform.isWindows ? File("NUL") : File("/dev/null");
 
 class Project {
-  String name;
-  Directory dir;
+  final String name;
+  final Directory dir;
   List<Group> groups = [];
   int currGroup = -1;
+  String commentsTemplate = "";
 
   /// The project.json file with the data inside
   File get projFile => File(p.join(dir.path, "project.json"));
@@ -82,13 +83,21 @@ class Project {
       [for (final student in groups[index]) student.displayName].join(", ");
 
   /// The source comment file for the group
-  File groupComments(int index) =>
+  File groupCommentFile(int index) =>
       groups[index].firstWhereOrNull((element) => true)?.commentsFile ??
       devNull;
 
+  /// Sets the groups comments
+  Future<void> setGroupComment(int index, String comment) async {
+    await Future.wait([
+      for (final student in groups[index])
+        student.commentsFile.writeAsString(comment, flush: true)
+    ]);
+  }
+
   /// Get the grade of a group
   Future<num?> groupGrade(int index) async =>
-      getGrade(await groupComments(index).readAsString());
+      getGrade(await groupCommentFile(index).readAsString());
 
   /// Get the index of a group. Sugar for project.groups.indexOf
   int groupIndex(Group group) => groups.indexOf(group);
@@ -98,6 +107,7 @@ class Project {
     await projFile.writeAsString(json.encode(toJson()));
   }
 
+  /// Sets the current group but also saves the project simultaneously
   Future<void> setCurrGroup(int index) async {
     currGroup = index;
     await save();
@@ -109,7 +119,7 @@ class Project {
     for (final group in groups) {
       group.sort((a, b) => a.didSubmit ? -1 : 1);
     }
-    // Sort the groups by submission then by length
+    // Sort the groups by whether the group submitted then by the groups length
     groups.sort((a, b) {
       final aSubmit = a.any((s) => s.didSubmit);
       if (aSubmit != b.any((s) => s.didSubmit)) {
@@ -121,7 +131,7 @@ class Project {
     await save();
   }
 
-  /// Cleans the project by removing all empty groups
+  /// Removes all empty groups
   void clean() {
     groups.removeWhere((group) => group.isEmpty);
   }
@@ -140,6 +150,20 @@ class Project {
     ];
     await sort();
     await init();
+  }
+
+  /// Sets the comments template
+  Future<void> setCommentsTemplate(String template) async {
+    for (int i = 0; i < groups.length; i++) {
+      final group = groups[i];
+      // We only apply if the group has submitted and the comment hasn't been changed
+      if (didGroupSubmit(group) &&
+          (await groupCommentFile(i).readAsString()) == commentsTemplate) {
+        setGroupComment(i, template);
+      }
+    }
+    commentsTemplate = template;
+    await save();
   }
 
   /// Submits the project (grades and zipping)
@@ -188,23 +212,24 @@ class Project {
         for (final group in groups)
           [for (final student in group) student.toJson()]
       ],
+      'commentsTemplate': commentsTemplate
     };
   }
 
   /// Loads from file system
   Future<void> load() async {
-    dir = dir.absolute;
     if (await projFile.exists()) {
       try {
         final data = jsonDecode(projFile.readAsStringSync());
-        currGroup = data["lastGroup"];
+        currGroup = data["lastGroup"] ?? -1;
         groups = [
-          for (final group in data["groups"])
+          for (final group in data["groups"] ?? [])
             [
               for (final student in group)
                 Student.fromJson(student, project: this)
             ]
         ];
+        commentsTemplate = data["commentsTemplate"] ?? "";
         await init();
         return;
       } catch (e) {
@@ -217,8 +242,8 @@ class Project {
   /// Add the project from the file system
   Project.add(
     this.name,
-    this.dir,
-  ) {
+    Directory dir,
+  ) : dir = dir.absolute {
     load().then((_) {});
   }
 
@@ -237,7 +262,6 @@ class Student {
   String userName;
   Project project;
 
-  // These get updated regularly
   /// The students submission files
   List<File> submissionFiles = [];
 

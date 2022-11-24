@@ -13,13 +13,16 @@ class FileUtil {
 }
 
 const terminalUtil =
-    FileUtil("Open terminal", icon: Icon(Icons.terminal), func: consoleDir);
+    FileUtil("Terminal", icon: Icon(Icons.terminal), func: consoleDir);
 const opendirUtil =
     FileUtil("Open directory", icon: Icon(Icons.folder), func: openDir);
 const openfileUtil =
     FileUtil("Open file", icon: Icon(Icons.file_open), func: openFile);
 const runfileUtil =
     FileUtil("Run file", icon: Icon(Icons.play_arrow), func: runFile);
+
+/// The list of file utilities
+const fileUtils = [terminalUtil, opendirUtil, openfileUtil, runfileUtil];
 
 class UtilButton extends StatelessWidget {
   final File file;
@@ -46,12 +49,20 @@ class UtilContextMenuTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-        title: Row(
-      children: [util.icon, const SizedBox(width: 15,), Text(util.name)],
-    ), onTap: () {
-      /// XXX: To close the ContextMenu
-      Navigator.of(context).pop();
-      util.func(file);
-    },);
+      title: Row(
+        children: [
+          util.icon,
+          const SizedBox(
+            width: 15,
+          ),
+          Text(util.name)
+        ],
+      ),
+      onTap: () {
+        // XXX: To close the ContextMenu
+        Navigator.of(context).pop();
+        util.func(file);
+      },
+    );
   }
 }

@@ -22,6 +22,30 @@ const langMap = {
   ".py": "Python"
 };
 
+/// THe Comments input text field
+class CommentsTextField extends StatelessWidget {
+  const CommentsTextField({
+    super.key,
+    required this.controller,
+  });
+
+  final TextEditingController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      decoration: const InputDecoration(
+          labelText: "Comments",
+          alignLabelWithHint: true,
+          border: OutlineInputBorder()),
+      controller: controller,
+      maxLines: 20,
+      minLines: 5,
+      cursorRadius: const Radius.circular(5),
+    );
+  }
+}
+
 /// A Widget to display a file
 class FileShower extends StatelessWidget {
   final File file;
@@ -46,7 +70,9 @@ class FileShower extends StatelessWidget {
               ? HighlightView(
                   snapshot.data!,
                   language: langMap[ext],
-                  theme: themeMap["github"]!,
+                  theme: context.isDarkMode
+                      ? themeMap["tomorrow-night"]!
+                      : themeMap["github"]!,
                   padding: const EdgeInsets.all(12),
                   textStyle: const TextStyle(
                       fontFamily:
