@@ -4,6 +4,8 @@ import 'package:app/logic.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'io.dart';
+
 /// Page to assemble groups
 class ProjectGroupsPage extends StatefulWidget {
   final Project project;
@@ -33,7 +35,7 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
         ),
         actions: [
           IconButton(
-            tooltip: "Blueprint",
+              tooltip: "Blueprint",
               onPressed: () {
                 Get.to(() => ProjectBlueprintPage(project));
               },
@@ -148,8 +150,8 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                                               groups.remove(group);
                                             });
                                           },
-                                          icon: const Icon(
-                                              Icons.keyboard_arrow_down_outlined),
+                                          icon: const Icon(Icons
+                                              .keyboard_arrow_down_outlined),
                                           label: const SizedBox()),
                                     ))),
                           ),
@@ -303,7 +305,10 @@ class _SubmitProjectPageState extends State<SubmitProjectPage> {
 
 class ProjectBlueprintPage extends StatelessWidget {
   final Project project;
-  const ProjectBlueprintPage(this.project, {Key? key}) : super(key: key);
+  final TextEditingController controller;
+  ProjectBlueprintPage(this.project, {Key? key})
+      : controller = TextEditingController(text: project.commentsTemplate),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -312,7 +317,29 @@ class ProjectBlueprintPage extends StatelessWidget {
         centerTitle: true,
         title: const Text('Comments Blueprint'),
       ),
-      body: Container(),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 60),
+        child: Row(
+          children: [
+            const Expanded(child: SizedBox()),
+            Expanded(
+                flex: 1,
+                child: Column(
+                  children: [
+                    CommentsTextField(controller: controller),
+                    const SizedBox(height: 30),
+                    ElevatedButton(
+                        onPressed: () async {
+                          await project.setCommentsTemplate(controller.text);
+                          Get.back();
+                        },
+                        child: const Text("Apply"))
+                  ],
+                )),
+            const Expanded(child: SizedBox()),
+          ],
+        ),
+      ),
     );
   }
 }

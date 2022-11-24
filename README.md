@@ -14,7 +14,7 @@ Andernfalls kannst du sehr einfach [Flutter installieren](https://docs.flutter.d
 
 Das wichtigste Feature ist, dass man Studierende in Gruppen zusammenfügen kann. Das erleichtert jeden weiteren Schritt extrem, da der Unterschied zwischen Realität und digitaler Welt minimiert wird. Die Realität sieht so aus, dass es Zwei- bis Dreiergruppen gibt, in denen eine Person abgibt für die ganze Gruppe abgibt. Diese Gruppen sind ab einem bestimmten Zeitpunkt (meistens nach 1-3 Wochen) sehr stabil. Im Whiteboard sieht es jedoch so aus, dass eigentlich jede Person für sich selbst verantwortlich ist und die Erstellung von Gruppen zwar generell möglich, aber bei großen Veranstaltungen nicht umsetzbar ist.
 
-Dadurch können zum Beispiel immer beide Gruppenmitglieder die Kommentare erhalten und nicht nur das Mitglied, das abgegeben hat. 
+Dadurch, dass das Programm in Kenntniss von den Gruppen ist, können zum Beispiel immer beide Gruppenmitglieder die Kommentare erhalten und nicht nur das Mitglied, das abgegeben hat. 
 
 ### Andere coole Features
 
@@ -31,7 +31,6 @@ Dadurch können zum Beispiel immer beide Gruppenmitglieder die Kommentare erhalt
 ## Changelog
 
 ### v1.0.3 (geplant)
-- Kommentartemplate für Projekte
 - Vorschau der Grade unter den Kommentaren
 - Besseres Auto Feature
 - Localization mit Deutsch und Englisch
@@ -39,6 +38,7 @@ Dadurch können zum Beispiel immer beide Gruppenmitglieder die Kommentare erhalt
 - "Automatisches" Testen (Details folgen)
 
 ### v1.0.2
+- Kommentartemplate für Projekte
 - Änderung am bisherigen finished-System. Man schließt eine Gruppe nun mit dem Eintragen des Grades ab und nicht durch das Klicken der grünen Buttons
 - Ein sicker Dark Mode
 - Context-Menu für File-Utils

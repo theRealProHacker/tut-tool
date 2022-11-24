@@ -21,6 +21,9 @@ const openfileUtil =
 const runfileUtil =
     FileUtil("Run file", icon: Icon(Icons.play_arrow), func: runFile);
 
+/// The list of file utilities
+const fileUtils = [terminalUtil, opendirUtil, openfileUtil, runfileUtil];
+
 class UtilButton extends StatelessWidget {
   final File file;
   final FileUtil util;
@@ -56,7 +59,7 @@ class UtilContextMenuTile extends StatelessWidget {
         ],
       ),
       onTap: () {
-        /// XXX: To close the ContextMenu
+        // XXX: To close the ContextMenu
         Navigator.of(context).pop();
         util.func(file);
       },
