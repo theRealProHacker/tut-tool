@@ -26,7 +26,7 @@ dependencies:
   # für das Accordion
   getwidget: ^3.0.1
   # Zum Anzeigen von PDFs (ungenutzt)
-  pdfx: ^2.3.0
+  # pdfx: ^2.3.0
   # Syntax Highlighting
   flutter_highlighter: ^0.1.1
   # Zip utils
