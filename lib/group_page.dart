@@ -15,14 +15,22 @@ class GroupPage extends StatelessWidget {
   final Project project;
   final int groupIndex;
   final TextEditingController controller = TextEditingController();
+  final savedIcon = const SavedIcon();
   GroupPage(this.project, this.groupIndex, {Key? key}) : super(key: key) {
-    project.groupCommentFile(groupIndex).readAsString().then(((value) {
+    savedController.grade.value = "null";
+    project.groupCommentFile(groupIndex).readAsString().then((value) {
       controller.text = value;
-    }));
+      savedController.grade.value = getGrade(value)?.nice() ?? "";
+    });
+    controller.addListener(() async {
+      savedController.grade.value = "null";
+      final comment = controller.text;
+      await project.setGroupComment(groupIndex, comment);
+      savedController.grade.value = getGrade(comment)?.nice() ?? "";
+    });
   }
 
   to(int relativeIndex) async {
-    await project.setGroupComment(groupIndex, controller.text);
     project.currGroup += relativeIndex;
     if (project.currGroup <= -1) {
       Get.to(() => ProjectGroupsPage(project));
@@ -37,6 +45,7 @@ class GroupPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(savedController);
     final submissionSide = DecoratedBox(
         decoration: BoxDecoration(
             border: Border.all(color: Colors.black12, width: 3),
@@ -80,7 +89,15 @@ class GroupPage extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [CommentsTextField(controller: controller)],
+          children: [
+            Stack(alignment: AlignmentDirectional.bottomEnd, children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: savedIcon,
+              ),
+              CommentsTextField(controller: controller),
+            ])
+          ],
         ),
       ),
     );
@@ -152,4 +169,28 @@ class GroupPage extends StatelessWidget {
       ]),
     );
   }
+}
+
+final savedController = GradeController();
+
+class GradeController extends GetxController {
+  Rx<String> grade = "".obs;
+}
+
+class SavedIcon extends StatefulWidget {
+  const SavedIcon({Key? key}) : super(key: key);
+
+  @override
+  State<SavedIcon> createState() => _SavedIconState();
+}
+
+class _SavedIconState extends State<SavedIcon> {
+  @override
+  Widget build(BuildContext context) => Obx(() {
+        final grade = Get.find<GradeController>().grade.value;
+        final isValid = grade.isNotEmpty;
+        return Text(isValid ? grade : "0", style: TextStyle(
+          color: isValid ? Colors.green : Colors.red, fontSize: 16)
+        );
+      });
 }
