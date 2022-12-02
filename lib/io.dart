@@ -7,7 +7,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart' as p;
-import 'package:pdfx/pdfx.dart' as pdfx;
 import 'package:syncfusion_flutter_pdf/pdf.dart' as pdf;
 import 'package:flutter_highlighter/flutter_highlighter.dart';
 import 'package:flutter_highlighter/theme_map.dart';
@@ -56,13 +55,6 @@ class FileShower extends StatelessWidget {
     final ext = p.extension(file.path);
     if (ext == ".pdf") {
       return const Text("PDF is in the working");
-      return Container(
-        constraints: const BoxConstraints(maxHeight: 1500),
-        child: pdfx.PdfView(
-          controller: pdfx.PdfController(
-              document: pdfx.PdfDocument.openFile(file.path)),
-        ),
-      );
     } else if (textFiles.contains(ext)) {
       return FutureBuilder(
           future: file.readAsString(),
