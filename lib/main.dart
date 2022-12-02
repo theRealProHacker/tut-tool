@@ -74,6 +74,8 @@ class _MyAppState extends State<MyApp> {
       defaultTransition: Transition.fadeIn,
       initialRoute: "/",
       routes: {"/": ((context) => const HomePage())},
+      locale: Get.deviceLocale,
+      fallbackLocale: const Locale('en', 'US'),
     );
   }
 }
