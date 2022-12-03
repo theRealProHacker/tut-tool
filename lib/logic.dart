@@ -10,6 +10,7 @@ import 'package:app/io.dart';
 import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+// import 'package:io';
 import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
@@ -184,19 +185,28 @@ class Project {
           )));
     } else {
       // Only ZIP when entering grades worked
-      final resultPath = '${dir.path}.zip';
+      final copiedDir = Directory('${dir.path} - Feedback');
+      final zipPath = '${copiedDir.path}.zip';
       try {
+        // Best alternative would be to add all files except for the project.json
+        // But I don't know how to do that with archive. 
+        // Maybe ZipDirectory.createFromFiles?
+        // Now we do this:
+        // Copy the directory
+        // then delete the project.json in that copy
+        // then zip the copied directory
+        // then delete that directory
+        copyDir(dir, copiedDir);
+        try { 
+          // if this fails, we don't care
+          await File(p.join(copiedDir.path, "project.json")).delete();
+        } catch (_) {}
         final encoder = ZipFileEncoder();
-        encoder.open(resultPath);
-        for (final student in students) {
-          await encoder.addDirectory(Directory(student.dir));
-        }
-        await encoder.addFile(gradesFile);
+        encoder.create(zipPath);
+        encoder.addDirectory(copiedDir);
         encoder.close();
-        final resultFile = File(resultPath);
-        // Hacky way to actually close the zip-file
-        await (await resultFile.open()).close();
-        openDir(resultFile);
+        await copiedDir.delete(recursive: true);
+        openDir(File(zipPath));
       } catch (e) {
         Get.snackbar("Failed to zip", "ZipEncoder failed");
       }

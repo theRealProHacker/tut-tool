@@ -75,6 +75,7 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                               fontWeight: FontWeight.bold, fontSize: 20)),
                       onPressed: (() async {
                         await autoGroups(project);
+                        await project.sort();
                         setState(() {
                           project.clean();
                         });

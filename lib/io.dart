@@ -188,16 +188,27 @@ void runFile(File file) {
 }
 
 // https://gist.github.com/thosakwe/681056e86673e73c4710cfbdfd2523a8
-Future<void> copyDirectory(Directory source, Directory destination) async {
-  await for (var entity in source.list(recursive: false)) {
-    if (entity is Directory) {
-      var newDirectory =
-          Directory(p.join(destination.absolute.path, p.basename(entity.path)));
-      await newDirectory.create();
-      await copyDirectory(entity.absolute, newDirectory);
-    } else if (entity is File) {
-      await entity.copy(p.join(destination.path, p.basename(entity.path)));
-    }
+// Future<void> copyDirectory(Directory source, Directory destination) async {
+//   await for (var entity in source.list(recursive: false)) {
+//     if (entity is Directory) {
+//       var newDirectory =
+//           Directory(p.join(destination.absolute.path, p.basename(entity.path)));
+//       await newDirectory.create();
+//       await copyDirectory(entity.absolute, newDirectory);
+//     } else if (entity is File) {
+//       await entity.copy(p.join(destination.path, p.basename(entity.path)));
+//     }
+//   }
+// }
+
+void copyDir(Directory source, Directory destination) {
+  if (Platform.isWindows) {
+    Process.run("Xcopy", ["/E", "/I", source.absolute.path, destination.absolute.path]);
+  } else if (Platform.isLinux || Platform.isMacOS) {
+    Process.run("cp", ["-r", source.absolute.path, destination.absolute.path]);
+  } else {
+    Get.snackbar(
+        "Can't copy directory", "Not supported on ${Platform.operatingSystem}");
   }
 }
 

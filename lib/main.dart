@@ -14,17 +14,20 @@ void main() async {
   prefs = await SharedPreferences.getInstance();
   final projectsString = prefs!.getString("projects")?.trim();
   if (projectsString?.isNotEmpty ?? false) {
-    final projects = projectsString!.split(";");
-    await Future.wait([
-      for (final project in projects)
+    final attrs = projectsString!.split(";").map((e) => e.split(","));
+    final projects = (await Future.wait([
+      for (final attr in attrs)
         () async {
-          final attr = project.split(",");
           final dir = Directory(attr.last);
           if (await dir.exists()) {
-            projC.projects.add(Project.add(attr.first, dir));
+            return Project.add(attr.first, dir);
+          } else {
+            return null;
           }
-        }()
-    ]);
+        } ()
+    ])).whereType<Project>();
+    /// XXX: We know that they already are in prefs
+    projC.projects.addAll(projects);
   }
 
   final darkMode = prefs!.getBool("darkMode") ?? false;
@@ -74,6 +77,8 @@ class _MyAppState extends State<MyApp> {
       defaultTransition: Transition.fadeIn,
       initialRoute: "/",
       routes: {"/": ((context) => const HomePage())},
+      locale: Get.deviceLocale,
+      fallbackLocale: const Locale('en', 'US'),
     );
   }
 }
