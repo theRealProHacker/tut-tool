@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app/main.dart';
+import 'package:get/get.dart';
 
 /// Settings Page that allows the user to choose preferences
 class SettingsPage extends StatelessWidget {
@@ -8,13 +9,13 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("Settings")),
+        appBar: AppBar(title: Text("settings".tr)),
         body: ListView(
           padding: const EdgeInsets.all(8.0),
           children: <Widget>[
-            Row(children: const [
-              ThemeChangeSwitch(),
-              Text("Enable Dark Mode"),
+            Row(children: [
+              const ThemeChangeSwitch(),
+              Text("enable_dark_mode".tr),
             ]),
           ],
         ));

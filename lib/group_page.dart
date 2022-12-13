@@ -182,8 +182,8 @@ class SavedIcon extends StatelessWidget {
   Widget build(BuildContext context) => Obx(() {
         final grade = Get.find<GradeController>().grade.value;
         final isValid = grade.isNotEmpty;
-        return Text(isValid ? grade : "0", style: TextStyle(
-          color: isValid ? Colors.green : Colors.red, fontSize: 16)
-        );
+        return Text(isValid ? grade : "0",
+            style: TextStyle(
+                color: isValid ? Colors.green : Colors.red, fontSize: 16));
       });
 }

@@ -1,8 +1,9 @@
 import 'dart:io';
 
 import 'package:app/theme/theme_provider.dart';
+import 'package:app/translations.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide Translations;
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
 
@@ -24,8 +25,10 @@ void main() async {
           } else {
             return null;
           }
-        } ()
-    ])).whereType<Project>();
+        }()
+    ]))
+        .whereType<Project>();
+
     /// XXX: We know that they already are in prefs
     projC.projects.addAll(projects);
   }
@@ -77,6 +80,7 @@ class _MyAppState extends State<MyApp> {
       defaultTransition: Transition.fadeIn,
       initialRoute: "/",
       routes: {"/": ((context) => const HomePage())},
+      translations: Translations(),
       locale: Get.deviceLocale,
       fallbackLocale: const Locale('en', 'US'),
     );
