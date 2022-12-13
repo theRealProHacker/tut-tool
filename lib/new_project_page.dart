@@ -13,7 +13,7 @@ class NewProjectPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final dirInput = DirInput();
     return Scaffold(
-        appBar: AppBar(centerTitle: true, title: const Text("New Project")),
+        appBar: AppBar(centerTitle: true, title: Text("new_project".tr)),
         body: Center(
           child: Container(
               padding:
@@ -28,10 +28,9 @@ class NewProjectPage extends StatelessWidget {
                       TextFormField(
                           autofocus: true,
                           controller: nameController,
-                          decoration:
-                              const InputDecoration(label: Text("Name")),
+                          decoration: InputDecoration(label: Text("name".tr)),
                           validator: (value) =>
-                              value!.isEmpty ? "Enter a name" : null,
+                              value!.isEmpty ? "enter_name".tr : null,
                           style: const TextStyle(fontSize: 20)),
                       SizedBox.fromSize(
                         size: const Size(0, 30),
@@ -53,7 +52,7 @@ class NewProjectPage extends StatelessWidget {
                           }
                         },
                         icon: const Icon(Icons.add),
-                        label: const Text('Create'),
+                        label: Text('create'.tr),
                       ),
                     ],
                   ))),

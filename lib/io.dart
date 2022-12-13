@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:app/translations.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart' as p;
@@ -33,10 +34,10 @@ class CommentsTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      decoration: const InputDecoration(
-          labelText: "Comments",
+      decoration: InputDecoration(
+          labelText: "comments".tr,
           alignLabelWithHint: true,
-          border: OutlineInputBorder()),
+          border: const OutlineInputBorder()),
       controller: controller,
       maxLines: 20,
       minLines: 5,
@@ -54,7 +55,7 @@ class FileShower extends StatelessWidget {
   Widget build(BuildContext context) {
     final ext = p.extension(file.path);
     if (ext == ".pdf") {
-      return const Text("PDF is in the working");
+      return Text("pdf_warning".tr);
     } else if (textFiles.contains(ext)) {
       return FutureBuilder(
           future: file.readAsString(),
@@ -70,9 +71,9 @@ class FileShower extends StatelessWidget {
                       fontFamily:
                           'MonoLisa,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace'),
                 )
-              : const Text("Loading...")));
+              : Text("loading".tr)));
     } else {
-      return const Text("Unknown File Format");
+      return Text("unknown_file_format".tr);
     }
   }
 }
@@ -92,13 +93,13 @@ class DirInput extends StatelessWidget {
     return TextFormField(
       controller: controller,
       readOnly: true,
-      decoration: const InputDecoration(hintText: "Choose Directory"),
+      decoration: InputDecoration(hintText: "choose_dir".tr),
       validator: (text) => text!.isEmpty
-          ? "Choose a directory"
-          : (value.existsSync() ? null : "Directory doesn't exist"),
+          ? "choose_dir".tr
+          : (value.existsSync() ? null : "directory_doesnt_exist".tr),
       onTap: () async {
         final selectedDir = await FilePicker.platform
-            .getDirectoryPath(dialogTitle: "Select your project directory");
+            .getDirectoryPath(dialogTitle: "select_dir".tr);
         if (selectedDir != null) {
           controller.text = selectedDir;
         }
@@ -119,8 +120,7 @@ void openFile(File file) {
       throw Exception();
     }
   } catch (e) {
-    Get.snackbar(
-        "Can't open file", "Not supported on ${Platform.operatingSystem}");
+    Get.snackbar("cant_open_file".tr, notSupportedOnPlatform());
   }
 }
 
@@ -136,8 +136,7 @@ void openDir(File file) {
       throw Exception();
     }
   } catch (e) {
-    Get.snackbar(
-        "Can't open directory", "Not supported on ${Platform.operatingSystem}");
+    Get.snackbar("cant_open_dir".tr, notSupportedOnPlatform());
   }
 }
 
@@ -156,8 +155,7 @@ void consoleDir(File file) {
       throw Exception();
     }
   } catch (e) {
-    Get.snackbar(
-        "Can't open console", "Not supported on ${Platform.operatingSystem}");
+    Get.snackbar("cant_open_terminal".tr, notSupportedOnPlatform());
   }
 }
 
@@ -182,8 +180,7 @@ void runFile(File file) {
       openFile(file);
     }
   } catch (e) {
-    Get.snackbar(
-        "Can't run file", "Not supported on ${Platform.operatingSystem}");
+    Get.snackbar("cant_run_file".tr, notSupportedOnPlatform());
   }
 }
 
@@ -203,12 +200,12 @@ void runFile(File file) {
 
 void copyDir(Directory source, Directory destination) {
   if (Platform.isWindows) {
-    Process.run("Xcopy", ["/E", "/I", source.absolute.path, destination.absolute.path]);
+    Process.run(
+        "Xcopy", ["/E", "/I", source.absolute.path, destination.absolute.path]);
   } else if (Platform.isLinux || Platform.isMacOS) {
     Process.run("cp", ["-r", source.absolute.path, destination.absolute.path]);
   } else {
-    Get.snackbar(
-        "Can't copy directory", "Not supported on ${Platform.operatingSystem}");
+    Get.snackbar("cant_copy_dir".tr, notSupportedOnPlatform());
   }
 }
 
@@ -225,7 +222,7 @@ Future<String> file2Text(File file) async {
       document.dispose();
       return text;
     } catch (e) {
-      log("Couldn't extract from PDF: ${file.path}");
+      log("cant_extract_pdf".trParams({"path": file.path}));
     }
   }
   return "";

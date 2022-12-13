@@ -15,7 +15,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Home"),
+          title: Text("home".tr),
           centerTitle: true,
           actions: [
             IconButton(
@@ -51,16 +51,16 @@ class HomeDrawer extends StatelessWidget {
       children: [
         DrawerHeader(
             decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-            child: const Text("Menu",
-                style: TextStyle(fontSize: 30, color: Colors.white))),
-        const AboutListTile(
-          icon: Icon(Icons.info_outline_rounded),
+            child: Text("menu".tr,
+                style: const TextStyle(fontSize: 30, color: Colors.white))),
+        AboutListTile(
+          icon: const Icon(Icons.info_outline_rounded),
           applicationVersion: "0.0.1",
-          aboutBoxChildren: <Widget>[
+          aboutBoxChildren: const <Widget>[
             SizedBox(height: 86, child: Text("Joking")),
             SizedBox(height: 24),
           ],
-          child: Text("About"),
+          child: Text("about".tr),
         )
       ],
     ));
@@ -82,7 +82,7 @@ class ProjectList extends StatelessWidget {
                   leading: const Icon(Icons.edit),
                   title: Text(projects[index].name),
                   trailing: Tooltip(
-                    message: "Delete",
+                    message: "delete".tr,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white60,
@@ -103,7 +103,7 @@ class ProjectList extends StatelessWidget {
                   }))
               : ListTile(
                   leading: const Icon(Icons.add),
-                  title: const Text("Create new project"),
+                  title: Text("create_project".tr),
                   onTap: () => Get.to(() => NewProjectPage(),
                       transition: Transition.fadeIn),
                 )),

@@ -35,9 +35,9 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
         ),
         actions: [
           IconButton(
-              tooltip: "Blueprint",
+              tooltip: "template".tr,
               onPressed: () {
-                Get.to(() => ProjectBlueprintPage(project));
+                Get.to(() => CommentsTemplatePage(project));
               },
               icon: const Icon(Icons.map)),
           const SizedBox(width: 20)
@@ -62,16 +62,16 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                         setState(() {});
                       },
                       icon: const Icon(Icons.sort),
-                      label: const Text("Sort",
-                          style: TextStyle(
+                      label: Text("sort".tr,
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20))),
                   const SizedBox(width: 10),
                   ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.all(12)),
                       icon: const Icon(Icons.auto_awesome, color: Colors.amber),
-                      label: const Text("Auto",
-                          style: TextStyle(
+                      label: Text("auto".tr,
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20)),
                       onPressed: (() async {
                         await autoGroups(project);
@@ -90,8 +90,8 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                         setState(() {});
                       },
                       icon: const Icon(Icons.restore),
-                      label: const Text("Reset",
-                          style: TextStyle(
+                      label: Text("reset".tr,
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20)))
                 ],
               ),
@@ -139,7 +139,7 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                                       ],
                                     ),
                                     trailing: Tooltip(
-                                      message: "Expand",
+                                      message: "expand".tr,
                                       child: ElevatedButton.icon(
                                           onPressed: () {
                                             final groups = project.groups;
@@ -170,7 +170,7 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
   }
 }
 
-/// A TextBox that is for dragging Text
+/// A TextBox for draggable Text
 class TextBox extends StatelessWidget {
   const TextBox({Key? key, required this.student, required this.project})
       : super(key: key);
@@ -217,7 +217,7 @@ class _SubmitProjectPageState extends State<SubmitProjectPage> {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text("Submit ${project.name}"),
+          title: Text("submit_project".trParams({"project": project.name})),
         ),
         body: Padding(
             padding: EdgeInsets.symmetric(
@@ -246,9 +246,9 @@ class _SubmitProjectPageState extends State<SubmitProjectPage> {
                                   .submit(zip(project.groups, realGrades))
                               : null,
                           icon: const Icon(Icons.upload),
-                          label: const Text(
-                            "Submit",
-                            style: TextStyle(fontSize: 20),
+                          label: Text(
+                            "submit".tr,
+                            style: const TextStyle(fontSize: 20),
                           )),
                     ),
                     const SizedBox(
@@ -277,7 +277,7 @@ class _SubmitProjectPageState extends State<SubmitProjectPage> {
                                               : Colors.green,
                                           fontSize: 16),
                                     )
-                                  : const Text("Loading ...");
+                                  : Text("loading".tr);
                               return ListTile(
                                 onTap: () async => await goTo(
                                     widget.project.groups.indexOf(group)),
@@ -304,20 +304,17 @@ class _SubmitProjectPageState extends State<SubmitProjectPage> {
   }
 }
 
-class ProjectBlueprintPage extends StatelessWidget {
+class CommentsTemplatePage extends StatelessWidget {
   final Project project;
   final TextEditingController controller;
-  ProjectBlueprintPage(this.project, {Key? key})
+  CommentsTemplatePage(this.project, {Key? key})
       : controller = TextEditingController(text: project.commentsTemplate),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Comments Blueprint'),
-      ),
+      appBar: AppBar(centerTitle: true, title: Text("comment_template".tr)),
       body: Padding(
         padding: const EdgeInsets.only(top: 60),
         child: Row(
@@ -334,7 +331,7 @@ class ProjectBlueprintPage extends StatelessWidget {
                           await project.setCommentsTemplate(controller.text);
                           Get.back();
                         },
-                        child: const Text("Apply"))
+                        child: Text("apply_template".tr))
                   ],
                 )),
             const Expanded(child: SizedBox()),

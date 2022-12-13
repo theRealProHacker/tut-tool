@@ -45,14 +45,14 @@ class Controller extends GetxController {
   addProject(Project project) {
     projects.add(project);
     persistProjects().then((value) => null).catchError((e) {
-      Get.snackbar("Couldn't add project persistently", "");
+      Get.snackbar("couldnt_add_project".tr, "");
     });
   }
 
   removeProjectAt(int pos) {
     projects.removeAt(pos);
     persistProjects().then((value) => null).catchError((e) {
-      Get.snackbar("Couldn't remove project persistently", "");
+      Get.snackbar("couldnt_remove_project".tr, "");
     });
   }
 }
@@ -189,7 +189,7 @@ class Project {
       final zipPath = '${copiedDir.path}.zip';
       try {
         // Best alternative would be to add all files except for the project.json
-        // But I don't know how to do that with archive. 
+        // But I don't know how to do that with archive.
         // Maybe ZipDirectory.createFromFiles?
         // Now we do this:
         // Copy the directory
@@ -197,7 +197,7 @@ class Project {
         // then zip the copied directory
         // then delete that directory
         copyDir(dir, copiedDir);
-        try { 
+        try {
           // if this fails, we don't care
           await File(p.join(copiedDir.path, "project.json")).delete();
         } catch (_) {}
@@ -208,7 +208,7 @@ class Project {
         await copiedDir.delete(recursive: true);
         openDir(File(zipPath));
       } catch (e) {
-        Get.snackbar("Failed to zip", "ZipEncoder failed");
+        Get.snackbar("zip_failed".tr, "zip_encoder_failed".tr);
       }
     }
   }
@@ -243,7 +243,7 @@ class Project {
         await init();
         return;
       } catch (e) {
-        log("Couldn't load project ($e)");
+        log("couldnt_load_project".trParams({"project": e.toString()}));
       }
     }
     await reset();
@@ -294,7 +294,7 @@ class Student {
         return row;
       }
     }
-    throw Exception("Could not find student in rows");
+    throw Exception; //("Could not find student in csv rows");
   }
 
   Student? setGrade(List<List<dynamic>> rows, num grade) {

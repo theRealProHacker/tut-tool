@@ -1,6 +1,7 @@
 import 'package:app/io.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'package:get/get.dart';
 
 typedef FileUtilFunction = void Function(File file);
 
@@ -12,17 +13,17 @@ class FileUtil {
   const FileUtil(this.name, {required this.icon, required this.func});
 }
 
-const terminalUtil =
-    FileUtil("Terminal", icon: Icon(Icons.terminal), func: consoleDir);
-const opendirUtil =
-    FileUtil("Open directory", icon: Icon(Icons.folder), func: openDir);
-const openfileUtil =
-    FileUtil("Open file", icon: Icon(Icons.file_open), func: openFile);
-const runfileUtil =
-    FileUtil("Run file", icon: Icon(Icons.play_arrow), func: runFile);
+final terminalUtil =
+    FileUtil("terminal".tr, icon: const Icon(Icons.terminal), func: consoleDir);
+final opendirUtil = FileUtil("open_directory".tr,
+    icon: const Icon(Icons.folder), func: openDir);
+final openfileUtil =
+    FileUtil("open_file".tr, icon: const Icon(Icons.file_open), func: openFile);
+final runfileUtil =
+    FileUtil("run_file".tr, icon: const Icon(Icons.play_arrow), func: runFile);
 
 /// The list of file utilities
-const fileUtils = [terminalUtil, opendirUtil, openfileUtil, runfileUtil];
+final fileUtils = [terminalUtil, opendirUtil, openfileUtil, runfileUtil];
 
 class UtilButton extends StatelessWidget {
   final File file;
