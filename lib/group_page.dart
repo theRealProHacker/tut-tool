@@ -117,7 +117,7 @@ class GroupPage extends StatelessWidget {
       body: Stack(children: [
         Padding(
             padding: const EdgeInsets.all(60.0),
-            child: MediaQuery.of(context).size.width > 1400
+            child: MediaQuery.of(context).size.width > 700
                 ? Row(
                     children: [
                       Expanded(child: submissionSide),
