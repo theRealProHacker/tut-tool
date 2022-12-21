@@ -1,5 +1,5 @@
+import 'package:app/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:app/main.dart';
 import 'package:get/get.dart';
 
 /// Settings Page that allows the user to choose preferences
@@ -22,31 +22,22 @@ class SettingsPage extends StatelessWidget {
   }
 }
 
+/// Really just a switch how it should behave anyway.
 class ThemeChangeSwitch extends StatefulWidget {
   const ThemeChangeSwitch({super.key});
 
   @override
-  State<StatefulWidget> createState() => _ThemeChangeSwitchState();
+  State<ThemeChangeSwitch> createState() => _ThemeChangeSwitchState();
 }
 
 class _ThemeChangeSwitchState extends State<ThemeChangeSwitch> {
-  bool dark = true;
-
-  @override
-  void initState() {
-    dark = themeProvider.isDarkMode;
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Switch(
-        value: dark,
-        onChanged: (bool value) {
-          themeProvider.toggleTheme(value);
-          setState(() {
-            dark = value;
-          });
+        value: isDarkMode(),
+        onChanged: (bool _) {
+          toggleTheme();
+          setState(() {});
         });
   }
 }
