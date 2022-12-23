@@ -114,59 +114,70 @@ class GroupPage extends StatelessWidget {
               icon: const Icon(Icons.arrow_forward))
         ],
       ),
-      body: Stack(children: [
-        Padding(
-            padding: const EdgeInsets.all(60.0),
-            child: MediaQuery.of(context).size.width > 1400
-                ? Row(
-                    children: [
-                      Expanded(child: submissionSide),
-                      const SizedBox(width: 30),
-                      Expanded(child: feedbackSide)
-                    ],
-                  )
-                : feedbackSide),
-        Align(
-            alignment: Alignment.centerLeft,
-            child: Flex(
-              mainAxisAlignment: MainAxisAlignment.center,
-              direction: Axis.vertical,
-              children: [
-                Expanded(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).appBarTheme.backgroundColor),
-                    child: IconButton(
-                      splashRadius: null,
-                      icon: const Icon(Icons.arrow_left_outlined),
-                      onPressed: () async => await to(-1),
+      body: FutureBuilder(
+        future: getMonitorSize(),
+        initialData: const Size(0, 0),
+        builder: (context, snapshot) => Stack(children: [
+          // The idea is to only show the feedbackSide when
+          // the windows width <= half of the screens width
+          // on desktop OSs
+          Padding(
+              padding: const EdgeInsets.all(60.0),
+              child: snapshot.hasData &&
+                      MediaQuery.of(context).size.width >
+                          snapshot.data!.width / 2
+                  ? Row(
+                      children: [
+                        Expanded(child: submissionSide),
+                        const SizedBox(width: 30),
+                        Expanded(child: feedbackSide)
+                      ],
+                    )
+                  : feedbackSide),
+          Align(
+              alignment: Alignment.centerLeft,
+              child: Flex(
+                mainAxisAlignment: MainAxisAlignment.center,
+                direction: Axis.vertical,
+                children: [
+                  Expanded(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).appBarTheme.backgroundColor),
+                      child: IconButton(
+                        splashRadius: null,
+                        icon: const Icon(Icons.arrow_left_outlined),
+                        onPressed: () async => await to(-1),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            )),
-        Align(
-            alignment: Alignment.centerRight,
-            child: Flex(
-              mainAxisAlignment: MainAxisAlignment.center,
-              direction: Axis.vertical,
-              children: [
-                Expanded(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).appBarTheme.backgroundColor),
-                    child: IconButton(
-                      splashRadius: null,
-                      icon: const Icon(Icons.arrow_right_outlined),
-                      onPressed: () async => await to(1),
+                ],
+              )),
+          Align(
+              alignment: Alignment.centerRight,
+              child: Flex(
+                mainAxisAlignment: MainAxisAlignment.center,
+                direction: Axis.vertical,
+                children: [
+                  Expanded(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).appBarTheme.backgroundColor),
+                      child: IconButton(
+                        splashRadius: null,
+                        icon: const Icon(Icons.arrow_right_outlined),
+                        onPressed: () async => await to(1),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            )),
-      ]),
+                ],
+              )),
+        ]),
+      ),
     );
   }
+
+  
 }
 
 final savedController = GradeController();
