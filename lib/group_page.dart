@@ -1,6 +1,7 @@
 import 'package:app/file_utils.dart';
 import 'package:app/io.dart';
 import 'package:app/project_page.dart';
+
 import 'package:contextmenu/contextmenu.dart';
 import 'package:flutter/material.dart';
 
@@ -14,15 +15,16 @@ import 'package:app/logic.dart';
 class GroupPage extends StatelessWidget {
   final Project project;
   final int groupIndex;
-  final TextEditingController controller = TextEditingController();
+  final TextEditingController commentsController = TextEditingController();
+  final TextEditingController submissionsController = TextEditingController();
   final savedIcon = const SavedIcon();
   GroupPage(this.project, this.groupIndex, {Key? key}) : super(key: key) {
     project.groupCommentFile(groupIndex).readAsString().then((value) {
-      controller.text = value;
+      commentsController.text = value;
       savedController.grade.value = getGrade(value)?.nice() ?? "";
     });
-    controller.addListener(() async {
-      final comment = controller.text;
+    commentsController.addListener(() async {
+      final comment = commentsController.text;
       await project.setGroupComment(groupIndex, comment);
       savedController.grade.value = getGrade(comment)?.nice() ?? "";
     });
@@ -75,7 +77,7 @@ class GroupPage extends StatelessWidget {
                     ]
                   ],
                 ),
-                contentChild: FileShower(file),
+                contentChild: SubmissionFileShower(file),
               ),
             )
         ]));
@@ -93,7 +95,7 @@ class GroupPage extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: savedIcon,
               ),
-              CommentsTextField(controller: controller),
+              CommentsTextField(controller: commentsController),
             ])
           ],
         ),

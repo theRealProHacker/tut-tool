@@ -28,11 +28,14 @@ dependencies:
   # Zum Anzeigen von PDFs (ungenutzt)
   # pdfx: ^2.3.0
   # Syntax Highlighting
-  flutter_highlighter: ^0.1.1
+  # flutter_highlighter: ^0.1.1
+  highlight: ^0.7.0
   # Zip utils
   archive: ^3.3.3
   # context menu support
   contextmenu: ^3.0.0
+  # code editor
+  code_text_field: ^1.0.9
 
 dev_dependencies:
   flutter_test:

@@ -5,24 +5,37 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:app/translations.dart';
+import 'package:app/logic.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart' as p;
 import 'package:syncfusion_flutter_pdf/pdf.dart' as pdf;
-import 'package:flutter_highlighter/flutter_highlighter.dart';
-import 'package:flutter_highlighter/theme_map.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:code_text_field/code_text_field.dart';
 
-const textFiles = [".hs", ".txt", ".s", ".asm", ".py"];
-const langMap = {
-  ".hs": "Haskell",
-  ".txt": "Plaintext",
-  ".s": "avrasm",
-  ".asm": "avrasm",
-  ".py": "Python"
+// Ein bisschen weird: jede Sprache hat ihre eigene Datei
+import 'package:highlight/languages/haskell.dart' show haskell;
+import 'package:highlight/languages/avrasm.dart' show avrasm;
+import 'package:highlight/languages/python.dart' show python;
+import 'package:highlight/languages/plaintext.dart' show plaintext;
+
+// for old flutter_highlighter
+// const langMap = {
+//   ".hs": "Haskell",
+//   ".txt": "Plaintext",
+//   ".s": "avrasm",
+//   ".asm": "avrasm",
+//   ".py": "Python"
+// };
+final langMap = {
+  ".hs": haskell,
+  ".txt": plaintext,
+  ".s": avrasm,
+  ".asm": avrasm,
+  ".py": python,
 };
 
-/// THe Comments input text field
+/// The Comments input text field
 class CommentsTextField extends StatelessWidget {
   const CommentsTextField({
     super.key,
@@ -47,34 +60,63 @@ class CommentsTextField extends StatelessWidget {
 }
 
 /// A Widget to display a file
-class FileShower extends StatelessWidget {
+class SubmissionFileShower extends StatelessWidget {
   final File file;
-  const FileShower(this.file, {Key? key}) : super(key: key);
+  const SubmissionFileShower(this.file, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final ext = p.extension(file.path);
     if (ext == ".pdf") {
       return Text("pdf_warning".tr);
-    } else if (textFiles.contains(ext)) {
+    } else if (langMap.containsKey(ext)) {
       return FutureBuilder(
-          future: file.readAsString(),
+          future: () async {
+            final fileName = p.basename(file.path);
+            final feedbackFile = File(p.join(
+              p.dirname(p.dirname(file.absolute.path)), 
+              feedbackAttachments, fileName));
+            final content = await feedbackFile.exists() ? await feedbackFile.readAsString() : await file.readAsString() ;
+            return Pair(file, content);
+          } (),
           builder: ((context, snapshot) => snapshot.hasData
-              ? HighlightView(
-                  snapshot.data!,
-                  language: langMap[ext],
-                  theme: context.isDarkMode
-                      ? themeMap["tomorrow-night"]!
-                      : themeMap["github"]!,
-                  padding: const EdgeInsets.all(12),
-                  textStyle: const TextStyle(
-                      fontFamily:
-                          'MonoLisa,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace'),
-                )
+              ? CodeEditor(snapshot.data!.second, snapshot.data!.first)
               : Text("loading".tr)));
     } else {
       return Text("unknown_file_format".tr);
     }
+  }
+}
+
+// HighlightView(
+//   snapshot.data!,
+//   language: langMap[ext],
+//   theme: context.isDarkMode
+//       ? themeMap["tomorrow-night"]!
+//       : themeMap["github"]!,
+//   padding: const EdgeInsets.all(12),
+//   textStyle: const TextStyle(
+//       fontFamily:
+//           'MonoLisa,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace'),
+// )
+
+class CodeEditor extends StatelessWidget {
+  final controller = CodeController();
+  final File writeFile;
+  CodeEditor(contents, this.writeFile, { Key? key }) : super(key: key){
+    controller.text = contents;
+    controller.language = langMap[p.extension(writeFile.path)]!;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CodeField(
+        controller: controller,
+        padding: const EdgeInsets.all(12),
+        textStyle: const TextStyle(
+          fontFamily:
+              'MonoLisa,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace'),
+      );
   }
 }
 
@@ -213,7 +255,7 @@ void copyDir(Directory source, Directory destination) {
 Future<String> file2Text(File file) async {
   // TODO: unpack zip files
   final ext = p.extension(file.path);
-  if (textFiles.contains(ext)) {
+  if (langMap.containsKey(ext)) {
     return await file.readAsString();
   } else if (ext == ".pdf") {
     try {
