@@ -11,7 +11,8 @@ import 'package:get/get.dart';
 import 'package:path/path.dart' as p;
 import 'package:syncfusion_flutter_pdf/pdf.dart' as pdf;
 import 'package:file_picker/file_picker.dart';
-import 'package:code_text_field/code_text_field.dart';
+import 'package:flutter_highlight/theme_map.dart';
+import 'package:flutter_code_editor/flutter_code_editor.dart';
 
 // Ein bisschen weird: jede Sprache hat ihre eigene Datei
 import 'package:highlight/languages/haskell.dart' show haskell;
@@ -74,11 +75,14 @@ class SubmissionFileShower extends StatelessWidget {
           future: () async {
             final fileName = p.basename(file.path);
             final feedbackFile = File(p.join(
-              p.dirname(p.dirname(file.absolute.path)), 
-              feedbackAttachments, fileName));
-            final content = await feedbackFile.exists() ? await feedbackFile.readAsString() : await file.readAsString() ;
-            return Pair(file, content);
-          } (),
+                p.dirname(p.dirname(file.absolute.path)),
+                feedbackAttachments,
+                fileName));
+            final content = await feedbackFile.exists()
+                ? await feedbackFile.readAsString()
+                : await file.readAsString();
+            return Pair(feedbackFile, content);
+          }(),
           builder: ((context, snapshot) => snapshot.hasData
               ? CodeEditor(snapshot.data!.second, snapshot.data!.first)
               : Text("loading".tr)));
@@ -102,21 +106,36 @@ class SubmissionFileShower extends StatelessWidget {
 
 class CodeEditor extends StatelessWidget {
   final controller = CodeController();
-  final File writeFile;
-  CodeEditor(contents, this.writeFile, { Key? key }) : super(key: key){
+  File writeFile;
+  CodeEditor(contents, this.writeFile, {Key? key}) : super(key: key) {
     controller.text = contents;
     controller.language = langMap[p.extension(writeFile.path)]!;
+    controller.addListener(() async {
+      writeFile.writeAsString(controller.text);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return CodeField(
+    final theme = CodeTheme(
+      data: CodeThemeData(
+          styles: context.isDarkMode
+              ? themeMap["tomorrow-night"]!
+              : themeMap["github"]!),
+      child: CodeField(
         controller: controller,
-        padding: const EdgeInsets.all(12),
         textStyle: const TextStyle(
-          fontFamily:
-              'MonoLisa,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace'),
-      );
+            fontFamily:
+                'MonoLisa,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace'),
+      ),
+    );
+    // a hack to enable automatic coloring (probably an issue in the CodeField)
+    final oldWriteFile = writeFile;
+    writeFile = devNull;
+    controller.text += " ";
+    controller.backspace();
+    writeFile = oldWriteFile;
+    return theme;
   }
 }
 
@@ -283,5 +302,3 @@ List<List<dynamic>> loadCSV(String text) => [
 String storeCSV(List<List<dynamic>> table) => [
       for (final line in table) [for (final field in line) '"$field"'].join(",")
     ].join("\n");
-
-//TODO: direct modification in csv tables
