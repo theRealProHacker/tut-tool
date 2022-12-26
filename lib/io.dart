@@ -5,24 +5,38 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:app/translations.dart';
+import 'package:app/logic.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart' as p;
 import 'package:syncfusion_flutter_pdf/pdf.dart' as pdf;
-import 'package:flutter_highlighter/flutter_highlighter.dart';
-import 'package:flutter_highlighter/theme_map.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_highlight/theme_map.dart';
+import 'package:flutter_code_editor/flutter_code_editor.dart';
 
-const textFiles = [".hs", ".txt", ".s", ".asm", ".py"];
-const langMap = {
-  ".hs": "Haskell",
-  ".txt": "Plaintext",
-  ".s": "avrasm",
-  ".asm": "avrasm",
-  ".py": "Python"
+// Ein bisschen weird: jede Sprache hat ihre eigene Datei
+import 'package:highlight/languages/haskell.dart' show haskell;
+import 'package:highlight/languages/avrasm.dart' show avrasm;
+import 'package:highlight/languages/python.dart' show python;
+import 'package:highlight/languages/plaintext.dart' show plaintext;
+
+// for old flutter_highlighter
+// const langMap = {
+//   ".hs": "Haskell",
+//   ".txt": "Plaintext",
+//   ".s": "avrasm",
+//   ".asm": "avrasm",
+//   ".py": "Python"
+// };
+final langMap = {
+  ".hs": haskell,
+  ".txt": plaintext,
+  ".s": avrasm,
+  ".asm": avrasm,
+  ".py": python,
 };
 
-/// THe Comments input text field
+/// The Comments input text field
 class CommentsTextField extends StatelessWidget {
   const CommentsTextField({
     super.key,
@@ -47,34 +61,81 @@ class CommentsTextField extends StatelessWidget {
 }
 
 /// A Widget to display a file
-class FileShower extends StatelessWidget {
+class SubmissionFileShower extends StatelessWidget {
   final File file;
-  const FileShower(this.file, {Key? key}) : super(key: key);
+  const SubmissionFileShower(this.file, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final ext = p.extension(file.path);
     if (ext == ".pdf") {
       return Text("pdf_warning".tr);
-    } else if (textFiles.contains(ext)) {
+    } else if (langMap.containsKey(ext)) {
       return FutureBuilder(
-          future: file.readAsString(),
+          future: () async {
+            final fileName = p.basename(file.path);
+            final feedbackFile = File(p.join(
+                p.dirname(p.dirname(file.absolute.path)),
+                feedbackAttachments,
+                fileName));
+            final content = await feedbackFile.exists()
+                ? await feedbackFile.readAsString()
+                : await file.readAsString();
+            return Pair(feedbackFile, content);
+          }(),
           builder: ((context, snapshot) => snapshot.hasData
-              ? HighlightView(
-                  snapshot.data!,
-                  language: langMap[ext],
-                  theme: context.isDarkMode
-                      ? themeMap["tomorrow-night"]!
-                      : themeMap["github"]!,
-                  padding: const EdgeInsets.all(12),
-                  textStyle: const TextStyle(
-                      fontFamily:
-                          'MonoLisa,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace'),
-                )
+              ? CodeEditor(snapshot.data!.second, snapshot.data!.first)
               : Text("loading".tr)));
     } else {
       return Text("unknown_file_format".tr);
     }
+  }
+}
+
+// HighlightView(
+//   snapshot.data!,
+//   language: langMap[ext],
+//   theme: context.isDarkMode
+//       ? themeMap["tomorrow-night"]!
+//       : themeMap["github"]!,
+//   padding: const EdgeInsets.all(12),
+//   textStyle: const TextStyle(
+//       fontFamily:
+//           'MonoLisa,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace'),
+// )
+
+class CodeEditor extends StatelessWidget {
+  final controller = CodeController();
+  File writeFile;
+  CodeEditor(contents, this.writeFile, {Key? key}) : super(key: key) {
+    controller.text = contents;
+    controller.language = langMap[p.extension(writeFile.path)]!;
+    controller.addListener(() async {
+      writeFile.writeAsString(controller.text);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = CodeTheme(
+      data: CodeThemeData(
+          styles: context.isDarkMode
+              ? themeMap["tomorrow-night"]!
+              : themeMap["github"]!),
+      child: CodeField(
+        controller: controller,
+        textStyle: const TextStyle(
+            fontFamily:
+                'MonoLisa,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace'),
+      ),
+    );
+    // a hack to enable automatic coloring (probably an issue in the CodeField)
+    final oldWriteFile = writeFile;
+    writeFile = devNull;
+    controller.text += " ";
+    controller.backspace();
+    writeFile = oldWriteFile;
+    return theme;
   }
 }
 
@@ -213,7 +274,7 @@ void copyDir(Directory source, Directory destination) {
 Future<String> file2Text(File file) async {
   // TODO: unpack zip files
   final ext = p.extension(file.path);
-  if (textFiles.contains(ext)) {
+  if (langMap.containsKey(ext)) {
     return await file.readAsString();
   } else if (ext == ".pdf") {
     try {
@@ -241,5 +302,3 @@ List<List<dynamic>> loadCSV(String text) => [
 String storeCSV(List<List<dynamic>> table) => [
       for (final line in table) [for (final field in line) '"$field"'].join(",")
     ].join("\n");
-
-//TODO: direct modification in csv tables

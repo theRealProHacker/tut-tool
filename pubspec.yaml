@@ -28,7 +28,10 @@ dependencies:
   # Zum Anzeigen von PDFs (ungenutzt)
   # pdfx: ^2.3.0
   # Syntax Highlighting
-  flutter_highlighter: ^0.1.1
+  highlight: ^0.7.0
+  flutter_highlight: ^0.7.0
+  # code editor
+  flutter_code_editor: ^0.2.3
   # Zip utils
   archive: ^3.3.3
   # context menu support

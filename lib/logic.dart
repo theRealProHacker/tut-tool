@@ -69,6 +69,9 @@ final projC = Controller();
 final studentDirRegex = RegExp(r"([^,]+), (.*)\((.*)\)");
 final File devNull = Platform.isWindows ? File("NUL") : File("/dev/null");
 
+const submissionAttachments = "Submission attachment(s)";
+const feedbackAttachments = "Feedback Attachment(s)";
+
 class Project {
   final String name;
   final Directory dir;
@@ -319,7 +322,7 @@ class Student {
     // TODO: unpack zip files
     return [
       await for (final file
-          in Directory(p.join(dir, "Submission attachment(s)")).list())
+          in Directory(p.join(dir, submissionAttachments)).list())
         if (file is File) file
     ];
   }
