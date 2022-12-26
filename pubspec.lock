@@ -149,10 +149,10 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: "28f1c95692761e7b582d83d40da61295d489f4be0a368b2746ed2cdfe87e7fef"
+      sha256: ecf52f978e72763ede54a93271318bbbca65a2be2d9ff658ec8ca4ea3a23d7ef
       url: "https://pub.dev"
     source: hosted
-    version: "5.2.3"
+    version: "5.2.4"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -244,10 +244,10 @@ packages:
     dependency: transitive
     description:
       name: intl
-      sha256: "910f85bce16fb5c6f614e117efa303e85a1731bb0081edf3604a2ae6e9a3cc91"
+      sha256: a3715e3bc90294e971cb7dc063fbf3cd9ee0ebf8604ffeafabd9e6f16abbdbe6
       url: "https://pub.dev"
     source: hosted
-    version: "0.17.0"
+    version: "0.18.0"
   js:
     dependency: transitive
     description:
@@ -404,10 +404,10 @@ packages:
     dependency: transitive
     description:
       name: shared_preferences_linux
-      sha256: "28aefc1261746e7bad3d09799496054beb84e8c4ffcdfed7734e17b4ada459a5"
+      sha256: fbc3cd6826896b66a5f576b025e4f344f780c84ea7f8203097a353370607a2c8
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.1"
+    version: "2.1.2"
   shared_preferences_macos:
     dependency: transitive
     description:
@@ -436,10 +436,10 @@ packages:
     dependency: transitive
     description:
       name: shared_preferences_windows
-      sha256: "97f7ab9a7da96d9cf19581f5de520ceb529548498bd6b5e0ccd02d68a0d15eba"
+      sha256: "07c274c2115d4d5e4280622abb09f0980e2c5b1fcdc98ae9f59a3bad5bfc1f26"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.1"
+    version: "2.1.2"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -481,18 +481,18 @@ packages:
     dependency: transitive
     description:
       name: syncfusion_flutter_core
-      sha256: c38cb76853bb6f0f77cc5b1318f602bb2acbd71196053696c2b27c0b95e20641
+      sha256: "0d027bd2137ecba3ad058a0ce07353f6e1ce051d03bc569b6cfee99f206fdaa6"
       url: "https://pub.dev"
     source: hosted
-    version: "20.3.59"
+    version: "20.4.38"
   syncfusion_flutter_pdf:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_pdf
-      sha256: "28065450a402656d3668a525bf10b79ab18e0ccf8fdf8cd11aea01b72716953a"
+      sha256: d83e01aeea2d1e08a7f43398c84fb503f977352e7e13c9edac9bd3b2e0bc255c
       url: "https://pub.dev"
     source: hosted
-    version: "20.3.59"
+    version: "20.4.38"
   term_glyph:
     dependency: transitive
     description:
@@ -537,10 +537,19 @@ packages:
     dependency: transitive
     description:
       name: win32
-      sha256: ca121dbbadb3e43b449053feab0cdf3f2bff93b107cacf0290e3d29f717374b6
+      sha256: c9ebe7ee4ab0c2194e65d3a07d8c54c5d00bb001b76081c4a04cdb8448b59e46
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.2"
+    version: "3.1.3"
+  window_size:
+    dependency: "direct main"
+    description:
+      path: "plugins/window_size"
+      ref: main
+      resolved-ref: "17d4710c17f4913137e7ec931f6e71eaef443363"
+      url: "https://github.com/google/flutter-desktop-embedding"
+    source: git
+    version: "0.1.0"
   xdg_directories:
     dependency: transitive
     description:

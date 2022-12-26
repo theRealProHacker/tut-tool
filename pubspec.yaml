@@ -36,6 +36,12 @@ dependencies:
   archive: ^3.3.3
   # context menu support
   contextmenu: ^3.0.0
+  # get desktop monitor size
+  window_size:
+    git:
+      url: https://github.com/google/flutter-desktop-embedding
+      path: plugins/window_size
+      ref: main
 
 dev_dependencies:
   flutter_test:

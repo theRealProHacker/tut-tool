@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
+import 'package:window_size/window_size.dart' as windowSize;
 
 /// Extends Map with the get and getAny methods
 extension DefaultMap<K, V> on Map<K, V> {
@@ -24,6 +25,11 @@ extension DefaultMap<K, V> on Map<K, V> {
     }
     return null;
   }
+}
+
+final isDesktop = Platform.isIOS || Platform.isLinux || Platform.isWindows;
+Future<Size> getMonitorSize() async {
+  return (await windowSize.getCurrentScreen())?.visibleFrame.size ?? const Size(0,0);
 }
 
 // Needs to be initialized in main.
