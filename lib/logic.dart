@@ -29,7 +29,8 @@ extension DefaultMap<K, V> on Map<K, V> {
 
 final isDesktop = Platform.isIOS || Platform.isLinux || Platform.isWindows;
 Future<Size> getMonitorSize() async {
-  return (await windowSize.getCurrentScreen())?.visibleFrame.size ?? const Size(0,0);
+  return (await windowSize.getCurrentScreen())?.visibleFrame.size ??
+      const Size(0, 0);
 }
 
 // Needs to be initialized in main.
