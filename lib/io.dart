@@ -72,19 +72,9 @@ class SubmissionFileShower extends StatelessWidget {
       return Text("pdf_warning".tr);
     } else if (langMap.containsKey(ext)) {
       return FutureBuilder(
-          future: () async {
-            final fileName = p.basename(file.path);
-            final feedbackFile = File(p.join(
-                p.dirname(p.dirname(file.absolute.path)),
-                feedbackAttachments,
-                fileName));
-            final content = await feedbackFile.exists()
-                ? await feedbackFile.readAsString()
-                : await file.readAsString();
-            return Pair(feedbackFile, content);
-          }(),
+          future: file.readAsString(),
           builder: ((context, snapshot) => snapshot.hasData
-              ? CodeEditor(snapshot.data!.second, snapshot.data!.first)
+              ? CodeEditor(snapshot.data!, file)
               : Text("loading".tr)));
     } else {
       return Text("unknown_file_format".tr);

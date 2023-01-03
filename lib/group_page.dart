@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app/file_utils.dart';
 import 'package:app/io.dart';
 import 'package:app/project_page.dart';
@@ -55,30 +57,44 @@ class GroupPage extends StatelessWidget {
             for (final student in project.groups[groupIndex])
               ...student.submissionFiles
           ])
-            ContextMenuArea(
-              builder: (context) {
-                return [
-                  for (final util in fileUtils)
-                    UtilContextMenuTile(util: util, file: file)
-                ];
-              },
-              child: GFAccordion(
-                collapsedTitleBackgroundColor:
-                    Theme.of(context).dialogBackgroundColor,
-                expandedTitleBackgroundColor: Theme.of(context).highlightColor,
-                contentBackgroundColor: Theme.of(context).cardColor,
-                titleChild: Row(
-                  children: [
-                    Text(p.basename(file.path)),
-                    const Expanded(child: SizedBox()),
-                    ...[
+            FutureBuilder(
+              future: () async {
+                final feedbackFile = File(p.join(
+                    p.dirname(p.dirname(file.absolute.path)),
+                    feedbackAttachments,
+                    p.basename(file.path)));
+                return await feedbackFile.exists() ? feedbackFile : file;
+              }(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return const SizedBox();
+                final file = snapshot.data!;
+                return ContextMenuArea(
+                  builder: (context) {
+                    return [
                       for (final util in fileUtils)
-                        UtilButton(util: util, file: file)
-                    ]
-                  ],
-                ),
-                contentChild: SubmissionFileShower(file),
-              ),
+                        UtilContextMenuTile(util: util, file: file)
+                    ];
+                  },
+                  child: GFAccordion(
+                    collapsedTitleBackgroundColor:
+                        Theme.of(context).dialogBackgroundColor,
+                    expandedTitleBackgroundColor:
+                        Theme.of(context).highlightColor,
+                    contentBackgroundColor: Theme.of(context).cardColor,
+                    titleChild: Row(
+                      children: [
+                        Text(p.basename(file.path)),
+                        const Expanded(child: SizedBox()),
+                        ...[
+                          for (final util in fileUtils)
+                            UtilButton(util: util, file: file)
+                        ]
+                      ],
+                    ),
+                    contentChild: SubmissionFileShower(file),
+                  ),
+                );
+              },
             )
         ]));
     final feedbackSide = DecoratedBox(
@@ -120,8 +136,8 @@ class GroupPage extends StatelessWidget {
         future: getMonitorSize(),
         initialData: const Size(0, 0),
         builder: (context, snapshot) => Stack(children: [
-          // The idea is to only show the feedbackSide when
-          // the windows width <= half of the screens width
+          // The idea is to only show the submissionSide when
+          // the windows width > half of the screens width
           // on desktop OSs
           Padding(
               padding: const EdgeInsets.all(60.0),
@@ -178,8 +194,6 @@ class GroupPage extends StatelessWidget {
       ),
     );
   }
-
-  
 }
 
 final savedController = GradeController();
