@@ -64,6 +64,11 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
+      # https://docs.flutter.dev/development/platform-integration/linux/building
+      - name: setup system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install libgtk-3-0 libblkid1 liblzma5
       - name: setup flutter
         uses: subosito/flutter-action@v2
         with:
