@@ -19,6 +19,9 @@ jobs:
           channel: 'stable'
       - name: install dependencies
         run: flutter pub get
+      - run: |
+        flutter create .
+        flutter build macos --release
       - run: flutter build apk --release --split-per-abi
       - run: |
           flutter build ios --release --no-codesign
@@ -28,7 +31,6 @@ jobs:
           ln -s ../Runner.app
           cd ..
           zip -r app.ipa Payload
-      - run: flutter build macos --release
       - name: Upload Mac artifacts
         uses: actions/upload-artifact@v3
         with: 
