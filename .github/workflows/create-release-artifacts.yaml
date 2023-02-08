@@ -29,13 +29,16 @@ jobs:
           ln -s ../Runner.app
           cd ..
           zip -r app.ipa Payload
-      - name: Upload Mac artifacts
+      - name: Upload Android artifacts
         uses: actions/upload-artifact@v3
         with: 
-          name: macos-artifacts
-          path: |
-            build/app/outputs/apk/release/*.apk
-            build/ios/iphoneos/app.ipa
+          name: android-artifacts
+          path: build/app/outputs/apk/release/*.apk
+      - name: Upload iOS artifacts
+        uses: actions/upload-artifact@v3
+        with: 
+          name: ios-artifacts
+          path: build/ios/iphoneos/app.ipa
   create-release-win:
     name: build windows
     runs-on: windows-latest
@@ -79,4 +82,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with: 
           name: linux-artifacts
-          path: build/linux/release/bundle
+          path: build/linux/release
