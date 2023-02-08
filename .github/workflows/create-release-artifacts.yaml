@@ -19,9 +19,7 @@ jobs:
           channel: 'stable'
       - name: install dependencies
         run: flutter pub get
-      # - run: |
-      #   "flutter create ."
-      #   flutter build macos --release
+      # - run: flutter build macos --release
       - run: flutter build apk --release --split-per-abi
       - run: |
           flutter build ios --release --no-codesign
@@ -38,7 +36,6 @@ jobs:
           path: |
             build/app/outputs/apk/release/*.apk
             build/ios/iphoneos/app.ipa
-            build/macos/Build/Products/Release/*.app
   create-release-win:
     name: build windows
     runs-on: windows-latest
@@ -48,7 +45,7 @@ jobs:
       - name: setup flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          channel: 'beta'
       - name: install dependencies
         run: flutter pub get
       - run: flutter build windows --release
@@ -67,8 +64,8 @@ jobs:
       # https://docs.flutter.dev/development/platform-integration/linux/building
       - name: setup system dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install libgtk-3-0 libblkid1 liblzma5
+          sudo apt-get -y update
+          sudo apt-get -y install libgtk-3-0 libblkid1 liblzma5 ninja-build
       - name: setup flutter
         uses: subosito/flutter-action@v2
         with:
