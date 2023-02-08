@@ -82,13 +82,8 @@ jobs:
         run: |
           cd build/
           ls -l
+        run: |
           cd linux/
-          ls -l
-          cd release/
-          ls -l
-          cd bundle/
-          ls -l
-          cd app/
           ls -l
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v3
