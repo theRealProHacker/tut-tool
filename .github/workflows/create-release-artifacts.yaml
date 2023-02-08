@@ -84,11 +84,13 @@ jobs:
           ls -al
           cd linux/
           ls -al
+          cd x64/
+          ls -al
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v3
         with: 
           name: linux-artifacts
-          path: build/linux/release
+          path: ./build/linux/release/bundle
   # TODO: automatically create a release on github
   # create-github-release:
   #   name: create release
