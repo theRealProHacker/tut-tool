@@ -81,10 +81,9 @@ jobs:
       - name: Test
         run: |
           cd build/
-          ls -l
-        run: |
+          ls -al
           cd linux/
-          ls -l
+          ls -al
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v3
         with: 
