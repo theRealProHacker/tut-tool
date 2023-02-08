@@ -45,6 +45,7 @@ jobs:
       - name: setup flutter
         uses: subosito/flutter-action@v2
         with:
+          # beta on windows because TextEditors are broken on stable
           channel: 'beta'
       - name: install dependencies
         run: flutter pub get
@@ -53,8 +54,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with: 
           name: windows-artifacts
-          path: |
-            build/windows/runner/Release
+          path: build/windows/runner/Release
   create-release-linux:
     name: build linux
     runs-on: ubuntu-latest
@@ -63,6 +63,7 @@ jobs:
         uses: actions/checkout@v3
       # https://docs.flutter.dev/development/platform-integration/linux/building
       - name: setup system dependencies
+        # -y flag because we can't interact with the terminal while this is running
         run: |
           sudo apt-get -y update
           sudo apt-get -y install libgtk-3-0 libblkid1 liblzma5 ninja-build
@@ -77,5 +78,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with: 
           name: linux-artifacts
-          path: |
-            build/linux/release/bundle
+          path: build/linux/release/bundle
