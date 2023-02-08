@@ -80,17 +80,13 @@ jobs:
       - run: flutter build linux --release
       - name: Test
         run: |
-          cd build/
-          ls -al
-          cd linux/
-          ls -al
-          cd x64/
+          cd build/linux/x64/release
           ls -al
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v3
         with: 
           name: linux-artifacts
-          path: ./build/linux/release/bundle
+          path: ./build/linux/x64/release/bundle
   # TODO: automatically create a release on github
   # create-github-release:
   #   name: create release
