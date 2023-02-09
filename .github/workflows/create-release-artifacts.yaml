@@ -86,6 +86,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with: 
           name: linux-artifacts
+          # https://github.com/flutter/website/issues/8224
           path: ./build/linux/x64/release/bundle
   # TODO: automatically create a release on github
   # create-github-release:
