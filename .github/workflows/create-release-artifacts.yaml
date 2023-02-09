@@ -2,62 +2,62 @@ on: [workflow_dispatch]
 
 name: Build & upload release artifacts
 jobs:
-  # create-release-mac:
-  #   name: build macos, ios, android
-  #   runs-on: macos-latest
-  #   steps:
-  #     - name: checkout
-  #       uses: actions/checkout@v3
-  #     - name: setup java
-  #       uses: actions/setup-java@v2
-  #       with:
-  #         java-version: '15'
-  #         distribution: 'adopt'
-  #     - name: setup flutter
-  #       uses: subosito/flutter-action@v2
-  #       with:
-  #         channel: 'stable'
-  #     - name: install dependencies
-  #       run: flutter pub get
-  #     # - run: flutter build macos --release
-  #     - run: flutter build apk --release --split-per-abi
-  #     - run: |
-  #         flutter build ios --release --no-codesign
-  #         cd build/ios/iphoneos
-  #         mkdir Payload
-  #         cd Payload
-  #         ln -s ../Runner.app
-  #         cd ..
-  #         zip -r app.ipa Payload
-  #     - name: Upload Android artifacts
-  #       uses: actions/upload-artifact@v3
-  #       with: 
-  #         name: android-artifacts
-  #         path: build/app/outputs/apk/release/*.apk
-  #     - name: Upload iOS artifacts
-  #       uses: actions/upload-artifact@v3
-  #       with: 
-  #         name: ios-artifacts
-  #         path: build/ios/iphoneos/app.ipa
-  # create-release-win:
-  #   name: build windows
-  #   runs-on: windows-latest
-  #   steps:
-  #     - name: checkout
-  #       uses: actions/checkout@v3
-  #     - name: setup flutter
-  #       uses: subosito/flutter-action@v2
-  #       with:
-  #         # beta on windows because TextEditors are broken on stable
-  #         channel: 'beta'
-  #     - name: install dependencies
-  #       run: flutter pub get
-  #     - run: flutter build windows --release
-  #     - name: Upload Windows artifacts
-  #       uses: actions/upload-artifact@v3
-  #       with: 
-  #         name: windows-artifacts
-  #         path: build/windows/runner/Release
+  create-release-mac:
+    name: build macos, ios, android
+    runs-on: macos-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: setup java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '15'
+          distribution: 'adopt'
+      - name: setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - name: install dependencies
+        run: flutter pub get
+      # - run: flutter build macos --release
+      - run: flutter build apk --release --split-per-abi
+      - run: |
+          flutter build ios --release --no-codesign
+          cd build/ios/iphoneos
+          mkdir Payload
+          cd Payload
+          ln -s ../Runner.app
+          cd ..
+          zip -r app.ipa Payload
+      - name: Upload Android artifacts
+        uses: actions/upload-artifact@v3
+        with: 
+          name: android-artifacts
+          path: build/app/outputs/apk/release/*.apk
+      - name: Upload iOS artifacts
+        uses: actions/upload-artifact@v3
+        with: 
+          name: ios-artifacts
+          path: build/ios/iphoneos/app.ipa
+  create-release-win:
+    name: build windows
+    runs-on: windows-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          # beta on windows because TextEditors are broken on stable
+          channel: 'beta'
+      - name: install dependencies
+        run: flutter pub get
+      - run: flutter build windows --release
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v3
+        with: 
+          name: windows-artifacts
+          path: build/windows/runner/Release
   create-release-linux:
     name: build linux
     runs-on: ubuntu-latest
