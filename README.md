@@ -4,9 +4,9 @@ Eine Flutter-App, um die Arbeit von Tutoren an der FUB im Institut Ma/Inf zu erl
 
 ## Wie kann ich loslegen?
 
-Du kannst dir entweder das neueste **Windows**-Release aus dem Release-Tab des GitHub-Repos herunterladen. Danach einfach die `Release.zip`-Datei unzippen und dann `app.exe` ausführen. 
+Du kannst dir entweder das neueste Windows/Linux/Android/iOS-Release aus dem Release-Tab des GitHub-Repos herunterladen. Danach einfach die `Release.zip`-Datei unzippen die App ausführen. 
 
-Andernfalls kannst du sehr einfach [Flutter installieren](https://docs.flutter.dev/get-started/install), dieses Repo klonen und einfach selber bauen. 
+Sonst kannst du auch sehr einfach [Flutter installieren](https://docs.flutter.dev/get-started/install), dieses Repo klonen und einfach selber bauen. 
 
 > Für Windows-User: Ihr müsst zum Selber-Bauen den channel auf `beta` oder `master` stellen. `stable` hat momentan einen Bug wodurch `TextField`s quasi unbrauchbar werden.  
 
@@ -30,12 +30,15 @@ Dadurch, dass das Programm in Kenntniss von den Gruppen ist, können zum Beispie
 
 ## Changelog
 
-### v1.0.3 (geplant)
+### Geplant
+- Support für mehr Ausführoptionen (Python und vielleicht auch `make` oder Ähnliches für ASM und C)
+- "Automatisches" Testen (Details folgen)
+
+### v1.0.3
 - Vorschau der Grade unter den Kommentaren
 - Besseres Auto Feature
 - Localization mit Deutsch und Englisch
-- Support für mehr Ausführoptionen (Python und vielleicht auch Make oder Ähnliches für ASM und C)
-- "Automatisches" Testen (Details folgen)
+- Releases für Windows, Linux, Android und iOS
 
 ### v1.0.2
 - Kommentartemplate für Projekte
