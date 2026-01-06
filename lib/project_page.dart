@@ -127,9 +127,11 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                                                 });
                                                 await project.save();
                                               }),
-                                              feedback: TextBox(
-                                                  student: student,
-                                                  project: project),
+                                              feedback: Material(
+                                                child: TextBox(
+                                                    student: student,
+                                                    project: project),
+                                              ),
                                               childWhenDragging: TextBox(
                                                   student: student,
                                                   project: project),
