@@ -3,10 +3,16 @@ import 'package:app/logic.dart';
 import 'package:get/get.dart';
 
 class MyThemes {
-  static final ThemeData lightTheme =
-      ThemeData(brightness: Brightness.light, primarySwatch: Colors.blue);
+  static final ThemeData lightTheme = ThemeData(
+    brightness: Brightness.light,
+    primarySwatch: Colors.blue,
+    useMaterial3: false,
+  );
 
-  static final ThemeData darkTheme = ThemeData(brightness: Brightness.dark);
+  static final ThemeData darkTheme = ThemeData(
+    brightness: Brightness.dark,
+    useMaterial3: false,
+  );
 }
 
 // More pythonic without a class but just pretty unique module members
