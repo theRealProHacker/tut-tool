@@ -13,6 +13,7 @@ import 'package:syncfusion_flutter_pdf/pdf.dart' as pdf;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_highlight/theme_map.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
+import 'package:io/io.dart' as io_pkg;
 
 // Ein bisschen weird: jede Sprache hat ihre eigene Datei
 import 'package:highlight/languages/haskell.dart' show haskell;
@@ -63,7 +64,7 @@ class CommentsTextField extends StatelessWidget {
 /// A Widget to display a file
 class SubmissionFileShower extends StatelessWidget {
   final File file;
-  const SubmissionFileShower(this.file, {Key? key}) : super(key: key);
+  const SubmissionFileShower(this.file, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +75,7 @@ class SubmissionFileShower extends StatelessWidget {
       return FutureBuilder(
           future: file.readAsString(),
           builder: ((context, snapshot) => snapshot.hasData
-              ? CodeEditor(snapshot.data!, file)
+              ? CodeEditor(contents: snapshot.data!, writeFile: file,)
               : Text("loading".tr)));
     } else {
       return Text("unknown_file_format".tr);
@@ -94,10 +95,11 @@ class SubmissionFileShower extends StatelessWidget {
 //           'MonoLisa,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace'),
 // )
 
+// ignore: must_be_immutable
 class CodeEditor extends StatelessWidget {
   final controller = CodeController();
   File writeFile;
-  CodeEditor(contents, this.writeFile, {Key? key}) : super(key: key) {
+  CodeEditor({required String contents, required this.writeFile, super.key}) {
     controller.text = contents;
     controller.language = langMap[p.extension(writeFile.path)]!;
     controller.addListener(() async {
@@ -132,7 +134,7 @@ class CodeEditor extends StatelessWidget {
 /// A Directory Input
 /// It uses a read-only TextField but opens a file picker on tap
 class DirInput extends StatelessWidget {
-  DirInput({Key? key}) : super(key: key);
+  DirInput({super.key});
 
   final controller = TextEditingController();
 
@@ -249,13 +251,10 @@ void runFile(File file) {
 //   }
 // }
 
-void copyDir(Directory source, Directory destination) {
-  if (Platform.isWindows) {
-    Process.run(
-        "Xcopy", ["/E", "/I", source.absolute.path, destination.absolute.path]);
-  } else if (Platform.isLinux || Platform.isMacOS) {
-    Process.run("cp", ["-r", source.absolute.path, destination.absolute.path]);
-  } else {
+Future<void> copyDir(Directory source, Directory destination) async {
+  try {
+    await io_pkg.copyPath(source.path, destination.path);
+  } catch (e) {
     Get.snackbar("cant_copy_dir".tr, notSupportedOnPlatform());
   }
 }

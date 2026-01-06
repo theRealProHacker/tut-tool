@@ -34,6 +34,8 @@ dependencies:
   flutter_code_editor: ^0.3.5
   # Zip utils
   archive: ^4.0.7
+  # cross-platform directory copy
+  io: ^1.0.4
   # context menu support
   contextmenu: ^3.0.0
   # get desktop monitor size

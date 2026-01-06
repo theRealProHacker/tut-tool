@@ -14,7 +14,7 @@ import 'package:get/get.dart';
 import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
-import 'package:window_size/window_size.dart' as windowSize;
+import 'package:window_size/window_size.dart' as window_size;
 
 /// Extends Map with the get and getAny methods
 extension DefaultMap<K, V> on Map<K, V> {
@@ -29,7 +29,7 @@ extension DefaultMap<K, V> on Map<K, V> {
 
 final isDesktop = Platform.isIOS || Platform.isLinux || Platform.isWindows;
 Future<Size> getMonitorSize() async {
-  return (await windowSize.getCurrentScreen())?.visibleFrame.size ??
+  return (await window_size.getCurrentScreen())?.visibleFrame.size ??
       const Size(0, 0);
 }
 
@@ -49,14 +49,14 @@ Future<void> persistProjects() async {
 class Controller extends GetxController {
   final projects = (<Project>[]).obs;
 
-  addProject(Project project) {
+  void addProject(Project project) {
     projects.add(project);
     persistProjects().then((value) => null).catchError((e) {
       Get.snackbar("couldnt_add_project".tr, "");
     });
   }
 
-  removeProjectAt(int pos) {
+  void removeProjectAt(int pos) {
     projects.removeAt(pos);
     persistProjects().then((value) => null).catchError((e) {
       Get.snackbar("couldnt_remove_project".tr, "");
@@ -206,15 +206,27 @@ class Project {
         // then delete the project.json in that copy
         // then zip the copied directory
         // then delete that directory
-        copyDir(dir, copiedDir);
+        await copyDir(dir, copiedDir);
         try {
           // if this fails, we don't care
           await File(p.join(copiedDir.path, "project.json")).delete();
-        } catch (_) {}
+        } catch (e) {
+          log("Couldn't delete project.json from copied dir", error: e);
+        }
         final encoder = ZipFileEncoder();
         encoder.create(zipPath);
-        encoder.addDirectory(copiedDir);
-        encoder.close();
+        int i = 1;
+        while (true) {
+          await Future.delayed(const Duration(milliseconds: 100));
+          try {
+            await encoder.addDirectory(copiedDir);
+            log("Zipped project after $i tries");
+            break;
+          } catch (_) {
+            if (i++ > 50) rethrow;
+          }
+        }
+        await encoder.close();
         await copiedDir.delete(recursive: true);
         openDir(File(zipPath));
       } catch (e) {
@@ -384,7 +396,7 @@ class Student {
 typedef Group = List<Student>;
 
 /// Automatically assign groups to the project
-autoGroups(Project project) async {
+Future<void> autoGroups(Project project) async {
   // Try to find a similar project and copy its groups
   final studentSet = Set.of(project.students);
   Project? bestProject;
