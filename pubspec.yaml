@@ -6,7 +6,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.18.2 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
@@ -20,20 +20,20 @@ dependencies:
   # path utils (basename, dirname, join, usw.)
   path: ^1.8.2
   # um den Projektordner zu wählen
-  file_picker: ^5.2.2
+  file_picker: ^10.3.8
   # um den text aus PDFs zu extrahieren
-  syncfusion_flutter_pdf: ^20.3.52
+  syncfusion_flutter_pdf: ^32.1.21
   # für das Accordion
-  getwidget: ^3.0.1
+  getwidget: ^7.0.0
   # Zum Anzeigen von PDFs (ungenutzt)
   # pdfx: ^2.3.0
   # Syntax Highlighting
   highlight: ^0.7.0
   flutter_highlight: ^0.7.0
   # code editor
-  flutter_code_editor: ^0.2.3
+  flutter_code_editor: ^0.3.5
   # Zip utils
-  archive: ^3.3.3
+  archive: ^4.0.7
   # context menu support
   contextmenu: ^3.0.0
   # get desktop monitor size
@@ -47,8 +47,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.0
-  flutter_launcher_name: "^0.0.1"
+  flutter_lints: ^6.0.0
   
 flutter_launcher_name:
   name: "Tut Tool"
