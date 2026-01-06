@@ -9,14 +9,14 @@ import 'io.dart';
 /// Page to assemble groups
 class ProjectGroupsPage extends StatefulWidget {
   final Project project;
-  const ProjectGroupsPage(this.project, {Key? key}) : super(key: key);
+  const ProjectGroupsPage(this.project, {super.key});
 
   @override
   State<ProjectGroupsPage> createState() => _ProjectGroupsPageState();
 }
 
 class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
-  goTo(int x) async {
+  Future<void> goTo(int x) async {
     final project = widget.project;
     await project.setCurrGroup(x);
     Get.to(() => GroupPage(project, x), transition: Transition.fade);
@@ -109,8 +109,8 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
                         final group = entry.value;
                         return [
                           DragTarget<Student>(
-                            onAccept: (student) {
-                              group.add(student);
+                            onAcceptWithDetails: (details) {
+                              group.add(details.data);
                             },
                             builder: ((context, candidateData, rejectedData) =>
                                 ListTile(
@@ -172,8 +172,7 @@ class _ProjectGroupsPageState extends State<ProjectGroupsPage> {
 
 /// A TextBox for draggable Text
 class TextBox extends StatelessWidget {
-  const TextBox({Key? key, required this.student, required this.project})
-      : super(key: key);
+  const TextBox({super.key, required this.student, required this.project});
 
   final Student student;
   final Project project;
@@ -198,14 +197,14 @@ class TextBox extends StatelessWidget {
 
 class SubmitProjectPage extends StatefulWidget {
   final Project project;
-  const SubmitProjectPage(this.project, {Key? key}) : super(key: key);
+  const SubmitProjectPage(this.project, {super.key});
 
   @override
   State<SubmitProjectPage> createState() => _SubmitProjectPageState();
 }
 
 class _SubmitProjectPageState extends State<SubmitProjectPage> {
-  goTo(int x) async {
+  Future<void> goTo(int x) async {
     final project = widget.project;
     await project.setCurrGroup(x);
     Get.to(() => GroupPage(project, x), transition: Transition.fade);
@@ -307,9 +306,8 @@ class _SubmitProjectPageState extends State<SubmitProjectPage> {
 class CommentsTemplatePage extends StatelessWidget {
   final Project project;
   final TextEditingController controller;
-  CommentsTemplatePage(this.project, {Key? key})
-      : controller = TextEditingController(text: project.commentsTemplate),
-        super(key: key);
+  CommentsTemplatePage(this.project, {super.key})
+      : controller = TextEditingController(text: project.commentsTemplate);
 
   @override
   Widget build(BuildContext context) {

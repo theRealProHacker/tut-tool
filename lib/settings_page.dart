@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 /// Settings Page that allows the user to choose preferences
 class SettingsPage extends StatelessWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+  const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -20,7 +20,7 @@ class GroupPage extends StatelessWidget {
   final TextEditingController commentsController = TextEditingController();
   final TextEditingController submissionsController = TextEditingController();
   final savedIcon = const SavedIcon();
-  GroupPage(this.project, this.groupIndex, {Key? key}) : super(key: key) {
+  GroupPage(this.project, this.groupIndex, {super.key}) {
     project.groupCommentFile(groupIndex).readAsString().then((value) {
       commentsController.text = value;
       savedController.grade.value = getGrade(value)?.nice() ?? "";
@@ -32,7 +32,7 @@ class GroupPage extends StatelessWidget {
     });
   }
 
-  to(int relativeIndex) async {
+  Future<void> to(int relativeIndex) async {
     project.currGroup += relativeIndex;
     if (project.currGroup <= -1) {
       Get.to(() => ProjectGroupsPage(project));
@@ -203,7 +203,7 @@ class GradeController extends GetxController {
 }
 
 class SavedIcon extends StatelessWidget {
-  const SavedIcon({Key? key}) : super(key: key);
+  const SavedIcon({super.key});
 
   @override
   Widget build(BuildContext context) => Obx(() {

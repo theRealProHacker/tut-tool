@@ -12,7 +12,7 @@ Sonst kannst du auch sehr einfach [Flutter installieren](https://docs.flutter.de
 
 ## Die Grundidee
 
-Das wichtigste Feature ist, dass man Studierende in Gruppen zusammenfügen kann. Das erleichtert jeden weiteren Schritt extrem, da der Unterschied zwischen Realität und digitaler Welt minimiert wird. Die Realität sieht so aus, dass es Zwei- bis Dreiergruppen gibt, in denen eine Person abgibt für die ganze Gruppe abgibt. Diese Gruppen sind ab einem bestimmten Zeitpunkt (meistens nach 1-3 Wochen) sehr stabil. Im Whiteboard sieht es jedoch so aus, dass eigentlich jede Person für sich selbst verantwortlich ist und die Erstellung von Gruppen zwar generell möglich, aber bei großen Veranstaltungen nicht umsetzbar ist.
+Das wichtigste Feature ist, dass man Studierende in Gruppen zusammenfügen kann. Das erleichtert jeden weiteren Schritt extrem, da der Unterschied zwischen Realität und digitaler Welt minimiert wird. Die Realität sieht so aus, dass es Zwei- bis Dreiergruppen gibt, in denen eine Person für die ganze Gruppe abgibt. Diese Gruppen sind ab einem bestimmten Zeitpunkt (meistens nach 1-3 Wochen) sehr stabil. Im Whiteboard sieht es jedoch so aus, dass eigentlich jede Person für sich selbst verantwortlich ist und die Erstellung von Gruppen zwar generell möglich, aber bei großen Veranstaltungen nicht umsetzbar ist.
 
 Dadurch, dass das Programm in Kenntniss von den Gruppen ist, können zum Beispiel immer beide Gruppenmitglieder die Kommentare erhalten und nicht nur das Mitglied, das abgegeben hat. 
 
@@ -33,6 +33,11 @@ Dadurch, dass das Programm in Kenntniss von den Gruppen ist, können zum Beispie
 ### Geplant
 - Support für mehr Ausführoptionen (Python und vielleicht auch `make` oder Ähnliches für ASM und C)
 - "Automatisches" Testen (Details folgen)
+
+### v1.1.0
+- Upgrade zu Dart 3
+- ZIP-Fehler fix
+
 
 ### v1.0.3
 - Vorschau der Grade unter den Kommentaren

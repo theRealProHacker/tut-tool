@@ -41,7 +41,7 @@ class HomePage extends StatelessWidget {
 
 /// The Drawer on the HomeScreen
 class HomeDrawer extends StatelessWidget {
-  const HomeDrawer({Key? key}) : super(key: key);
+  const HomeDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {

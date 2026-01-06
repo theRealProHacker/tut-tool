@@ -28,8 +28,7 @@ final fileUtils = [terminalUtil, opendirUtil, openfileUtil, runfileUtil];
 class UtilButton extends StatelessWidget {
   final File file;
   final FileUtil util;
-  const UtilButton({Key? key, required this.util, required this.file})
-      : super(key: key);
+  const UtilButton({super.key, required this.util, required this.file});
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +43,7 @@ class UtilButton extends StatelessWidget {
 class UtilContextMenuTile extends StatelessWidget {
   final File file;
   final FileUtil util;
-  const UtilContextMenuTile({Key? key, required this.util, required this.file})
-      : super(key: key);
+  const UtilContextMenuTile({super.key, required this.util, required this.file});
 
   @override
   Widget build(BuildContext context) {
