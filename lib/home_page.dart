@@ -76,39 +76,55 @@ class ProjectList extends StatelessWidget {
     final List<Project> projects = projC.projects;
 
     return Obx(
-      () => ListView.separated(
-          itemBuilder: ((context, index) => index < projects.length
-              ? ListTile(
-                  leading: const Icon(Icons.edit),
-                  title: Text(projects[index].name),
-                  trailing: Tooltip(
-                    message: "delete".tr,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white60,
-                            foregroundColor: Colors.black87),
-                        onPressed: (() => projC.removeProjectAt(index)),
-                        child: const Icon(Icons.delete)),
-                  ),
-                  onTap: (() {
-                    final project = projects[index];
-                    if (project.currGroup >= 0 &&
-                        project.currGroup < project.groups.length) {
-                      Get.to(() => GroupPage(project, project.currGroup));
-                    } else if (project.currGroup == -1) {
-                      Get.to(() => ProjectGroupsPage(project));
-                    } else {
-                      Get.to(() => SubmitProjectPage(project));
-                    }
-                  }))
-              : ListTile(
-                  leading: const Icon(Icons.add),
-                  title: Text("create_project".tr),
-                  onTap: () => Get.to(() => NewProjectPage(),
-                      transition: Transition.fadeIn),
-                )),
-          separatorBuilder: ((context, index) => const Divider()),
-          itemCount: projects.length + 1),
+      () => Column(
+        children: [
+          Expanded(
+            child: ReorderableListView.builder(
+              buildDefaultDragHandles: false,
+              onReorder: (oldIndex, newIndex) {
+                if (newIndex > oldIndex) newIndex--;
+                projC.reorderProject(oldIndex, newIndex);
+              },
+              itemCount: projects.length,
+              itemBuilder: (context, index) => ListTile(
+                key: ValueKey(projects[index]),
+                leading: ReorderableDragStartListener(
+                  index: index,
+                  child: const Icon(Icons.drag_handle),
+                ),
+                title: Text(projects[index].name),
+                trailing: Tooltip(
+                  message: "delete".tr,
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white60,
+                          foregroundColor: Colors.black87),
+                      onPressed: (() => projC.removeProjectAt(index)),
+                      child: const Icon(Icons.delete)),
+                ),
+                onTap: (() {
+                  final project = projects[index];
+                  if (project.currGroup >= 0 &&
+                      project.currGroup < project.groups.length) {
+                    Get.to(() => GroupPage(project, project.currGroup));
+                  } else if (project.currGroup == -1) {
+                    Get.to(() => ProjectGroupsPage(project));
+                  } else {
+                    Get.to(() => SubmitProjectPage(project));
+                  }
+                }),
+              ),
+            ),
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.add),
+            title: Text("create_project".tr),
+            onTap: () =>
+                Get.to(() => NewProjectPage(), transition: Transition.fadeIn),
+          ),
+        ],
+      ),
     );
   }
 }

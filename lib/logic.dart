@@ -63,6 +63,14 @@ class Controller extends GetxController {
       Get.snackbar("couldnt_remove_project".tr, "");
     });
   }
+
+  void reorderProject(int oldIndex, int newIndex) {
+    final project = projects.removeAt(oldIndex);
+    projects.insert(newIndex, project);
+    persistProjects().then((value) => null).catchError((e) {
+      Get.snackbar("couldnt_reorder_project".tr, "");
+    });
+  }
 }
 
 final projC = Controller();
