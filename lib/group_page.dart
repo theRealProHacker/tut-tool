@@ -83,8 +83,9 @@ class GroupPage extends StatelessWidget {
                     contentBackgroundColor: Theme.of(context).cardColor,
                     titleChild: Row(
                       children: [
-                        Text(p.basename(file.path)),
-                        const Expanded(child: SizedBox()),
+                        Expanded(
+                          child: _EllipsizedFilename(p.basename(file.path)),
+                        ),
                         ...[
                           for (final util in fileUtils)
                             UtilButton(util: util, file: file)
@@ -213,4 +214,69 @@ class SavedIcon extends StatelessWidget {
             style: TextStyle(
                 color: isValid ? Colors.green : Colors.red, fontSize: 16));
       });
+}
+
+/// A widget that displays a filename with middle ellipsis if too long,
+/// always preserving the file extension.
+class _EllipsizedFilename extends StatelessWidget {
+  final String filename;
+
+  const _EllipsizedFilename(this.filename);
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final style = DefaultTextStyle.of(context).style;
+        final textPainter = TextPainter(
+          text: TextSpan(text: filename, style: style),
+          maxLines: 1,
+          textDirection: TextDirection.ltr,
+        )..layout(maxWidth: double.infinity);
+
+        // If the text fits, just display it normally
+        if (textPainter.width <= constraints.maxWidth) {
+          return Text(filename);
+        }
+
+        // Split into name and extension
+        final extension = p.extension(filename);
+        final nameWithoutExt = p.basenameWithoutExtension(filename);
+
+        // Measure the extension + ellipsis
+        final ellipsis = '…';
+        final suffixPainter = TextPainter(
+          text: TextSpan(text: '$ellipsis$extension', style: style),
+          maxLines: 1,
+          textDirection: TextDirection.ltr,
+        )..layout(maxWidth: double.infinity);
+
+        final availableWidthForName =
+            constraints.maxWidth - suffixPainter.width;
+
+        // Find how many characters of the name we can fit
+        String truncatedName = '';
+        for (int i = 1; i <= nameWithoutExt.length; i++) {
+          final testName = nameWithoutExt.substring(0, i);
+          final testPainter = TextPainter(
+            text: TextSpan(text: testName, style: style),
+            maxLines: 1,
+            textDirection: TextDirection.ltr,
+          )..layout(maxWidth: double.infinity);
+
+          if (testPainter.width > availableWidthForName) {
+            break;
+          }
+          truncatedName = testName;
+        }
+
+        // If we can't fit even one character, just show ellipsis + extension
+        final displayText = truncatedName.isEmpty
+            ? '$ellipsis$extension'
+            : '$truncatedName$ellipsis$extension';
+
+        return Text(displayText);
+      },
+    );
+  }
 }
