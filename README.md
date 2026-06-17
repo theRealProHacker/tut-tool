@@ -1,6 +1,6 @@
 # Tut-Tool
 
-Eine Flutter-App, um die Arbeit von Tutoren an der FUB im Institut Ma/Inf zu erleichtern.
+Eine Flutter-App, um die Arbeit von Tutoren, die an der Freien Universität Berlin mit dem Whiteboard arbeiten, zu erleichtern.
 
 ## Wie kann ich loslegen?
 
@@ -8,7 +8,10 @@ Du kannst dir entweder das neueste Windows/Linux/Android/iOS-Release aus dem Rel
 
 Sonst kannst du auch sehr einfach [Flutter installieren](https://docs.flutter.dev/get-started/install), dieses Repo klonen und einfach selber bauen. 
 
-> Für Windows-User: Ihr müsst zum Selber-Bauen den channel auf `beta` oder `master` stellen. `stable` hat momentan einen Bug wodurch `TextField`s quasi unbrauchbar werden.  
+Prozess:
+- Im Whiteboard bei dem jeweiligen Assignment auf Grade drücken
+    ![An image showing an assignment in the Whiteboard](images/assigments-grade.png)
+- 
 
 ## Die Grundidee
 
@@ -16,7 +19,7 @@ Das wichtigste Feature ist, dass man Studierende in Gruppen zusammenfügen kann.
 
 Dadurch, dass das Programm in Kenntniss von den Gruppen ist, können zum Beispiel immer beide Gruppenmitglieder die Kommentare erhalten und nicht nur das Mitglied, das abgegeben hat. 
 
-### Andere coole Features
+## Andere coole Features
 
 1. Automatische Gruppenbildung: Die App geht durch die Abgaben und matched die Studenten zusammen, die in einer Abgabe gemeinsam erwähnt werden. 
 2. Der Workflow: Man muss sich nicht mehr durch Ordnerstrukturen durchkämpfen, sondern kann sich entspannt durch Gruppen durchklicken, die Abgaben anschauen, kommentieren und bewerten. `Tut-Tool` möchte den Korrekturaufwand auf das Minimum reduzieren, denn das erhöht unsere Leistungsfähigkeit und die Qualität der Korrekturen für die Studis. 

@@ -236,7 +236,7 @@ class Project {
           }
         }
         await encoder.close();
-        await copiedDir.delete(recursive: true);
+        // await copiedDir.delete(recursive: true);
         openDir(File(zipPath));
       } catch (e) {
         Get.snackbar("zip_failed".tr, "zip_encoder_failed".tr);
